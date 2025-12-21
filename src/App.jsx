@@ -21,7 +21,17 @@ import AdminVerifyOtpPage from './pages/admin/AdminVerifyOtpPage';
 import ApprovalsPage from './pages/admin/ApprovalsPage';
 // Seeker Pages
 import SeekerProfilePage from './pages/seeker/SeekerProfilePage';
+import JobBoardPage from './pages/seeker/JobBoardPage';
+import JobDetailPage from './pages/seeker/JobDetailPage';
+import MyApplicationsPage from './pages/seeker/MyApplicationsPage';
+import SavedJobsPage from './pages/seeker/SavedJobsPage';
 import PlaceholderPage from './pages/PlaceholderPage';
+
+// Employer Pages
+import PostJobPage from './pages/employer/PostJobPage';
+import CompanyProfilePage from './pages/employer/CompanyProfilePage';
+import ManageJobsPage from './pages/employer/ManageJobsPage';
+import ApplicantsPage from './pages/employer/ApplicantsPage';
 
 import useAuthStore from './store/authStore';
 import { ROUTES } from './config/constants';
@@ -115,23 +125,17 @@ function AppContent() {
           <Route path="/messages" element={<ProtectedRoute><PlaceholderPage title="Messages" /></ProtectedRoute>} />
 
           {/* Seeker Dashboard Routes */}
-          <Route path="/jobs" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="Find Work" /></ProtectedRoute>} />
-          <Route path="/saved" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="Saved Jobs" /></ProtectedRoute>} />
-          <Route path="/applications" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="My Applications" /></ProtectedRoute>} />
-          <Route path="/my-jobs" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="Current Jobs" /></ProtectedRoute>} />
-          <Route path="/work-diary" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="Work Diary" /></ProtectedRoute>} />
-          <Route path="/stats" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="My Statistics" /></ProtectedRoute>} />
-          <Route path="/earnings" element={<ProtectedRoute allowedRoles="SEEKER"><PlaceholderPage title="My Earnings" /></ProtectedRoute>} />
+          <Route path="/jobs" element={<ProtectedRoute allowedRoles="SEEKER"><JobBoardPage /></ProtectedRoute>} />
+          <Route path="/jobs/:id" element={<ProtectedRoute><JobDetailPage /></ProtectedRoute>} />
+          <Route path="/applications" element={<ProtectedRoute allowedRoles="SEEKER"><MyApplicationsPage /></ProtectedRoute>} />
+          <Route path="/saved" element={<ProtectedRoute allowedRoles="SEEKER"><SavedJobsPage /></ProtectedRoute>} />
           <Route path={ROUTES.SEEKER.PROFILE} element={<ProtectedRoute allowedRoles="SEEKER"><SeekerProfilePage /></ProtectedRoute>} />
 
           {/* Employer Dashboard Routes */}
-          <Route path="/post-job" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Post a Job" /></ProtectedRoute>} />
-          <Route path="/jobs/manage" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Manage Jobs" /></ProtectedRoute>} />
-          <Route path="/talent" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Discover Talent" /></ProtectedRoute>} />
-          <Route path="/applicants" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Applicant Tracking" /></ProtectedRoute>} />
-          <Route path="/contracts" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Candidate Contracts" /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Hiring Analytics" /></ProtectedRoute>} />
-          <Route path="/billing" element={<ProtectedRoute allowedRoles="EMPLOYER"><PlaceholderPage title="Billing & Invoices" /></ProtectedRoute>} />
+          <Route path="/post-job" element={<ProtectedRoute allowedRoles="EMPLOYER"><PostJobPage /></ProtectedRoute>} />
+          <Route path="/employer/profile" element={<ProtectedRoute allowedRoles="EMPLOYER"><CompanyProfilePage /></ProtectedRoute>} />
+          <Route path="/jobs/manage" element={<ProtectedRoute allowedRoles="EMPLOYER"><ManageJobsPage /></ProtectedRoute>} />
+          <Route path="/applicants" element={<ProtectedRoute allowedRoles="EMPLOYER"><ApplicantsPage /></ProtectedRoute>} />
 
           {/* Admin Dashboard Routes */}
           <Route path={ROUTES.ADMIN.DASHBOARD} element={<ProtectedRoute allowedRoles="ADMIN"><DashboardPage /></ProtectedRoute>} />

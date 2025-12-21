@@ -14,6 +14,7 @@ import {
     Search,
     ArrowUpRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import CompanyVerificationWidget from '../../components/dashboard/CompanyVerificationWidget';
 
 const EmployerDashboard = ({ user }) => {
@@ -45,20 +46,20 @@ const EmployerDashboard = ({ user }) => {
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-4 border border-emerald-500/20">
                         <Zap size={14} /> Hiring High Priority
                     </div>
-                    <h1 className="text-4xl font-heading font-black text-primary dark:text-white leading-tight">
-                        Good morning, {user?.name?.split(' ')[0] || 'HireNest Partner'}.
+                    <h1 className="text-4xl lg:text-5xl font-serif font-black text-primary dark:text-white leading-tight">
+                        Good morning, <span className="italic font-medium text-secondary underline decoration-accent underline-offset-[8px]">{user?.name?.split(' ')[0] || 'HireNest Partner'}</span>.
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium text-lg max-w-lg mt-2">
+                    <p className="text-gray-500 dark:text-gray-400 font-heading font-light text-lg max-w-lg mt-4">
                         You have 12 new applications for the <span className="text-secondary font-bold">Senior Brand Designer</span> role.
                     </p>
                 </div>
                 <div className="flex gap-4">
-                    <button className="flex-1 sm:flex-none px-8 py-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-primary dark:text-white font-black rounded-2xl hover:bg-gray-50 dark:hover:bg-white/10 transition-all shadow-sm flex items-center justify-center gap-3">
+                    <Link to="/talent" className="flex-1 sm:flex-none px-8 py-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-primary dark:text-white font-black rounded-2xl hover:bg-gray-50 dark:hover:bg-white/10 transition-all shadow-sm flex items-center justify-center gap-3">
                         <Search size={20} /> Browse Talent
-                    </button>
-                    <button className="flex-1 sm:flex-none px-8 py-4 bg-secondary text-white font-black rounded-2xl hover:bg-secondary-dark transition-all shadow-xl shadow-secondary/20 flex items-center justify-center gap-3 active:scale-95">
+                    </Link>
+                    <Link to="/post-job" className="flex-1 sm:flex-none px-8 py-4 bg-secondary text-white font-black rounded-2xl hover:bg-secondary-dark transition-all shadow-xl shadow-secondary/20 flex items-center justify-center gap-3 active:scale-95">
                         <Plus size={20} /> Post New Job
-                    </button>
+                    </Link>
                 </div>
             </div>
 

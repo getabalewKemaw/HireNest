@@ -13,13 +13,17 @@ import {
   Users,
   Zap,
   ShieldCheck,
-  Globe
+  Globe,
+  Bell,
+  Bookmark
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useTheme from '../hooks/useTheme';
+import useNotificationStore from '../store/notificationStore';
 import { ROUTES } from '../config/constants';
 import Button from './Button';
 import MobileMenu from './MobileMenu';
+import NotificationPanel from './NotificationPanel';
 
 /**
  * Navigation Bar Component
@@ -30,11 +34,27 @@ const Navbar = () => {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuthStore();
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount, fetchUnreadCount } = useNotificationStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const dropdownRef = useRef(null);
+
+  // Initial fetch for notifications
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      fetchUnreadCount(user.id);
+
+      // Optional: Set up polling for notifications
+      const interval = setInterval(() => {
+        fetchUnreadCount(user.id);
+      }, 60000); // Check every minute
+
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated, user?.id, fetchUnreadCount]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -106,6 +126,7 @@ const Navbar = () => {
                   >
                     <Link to="/jobs" className={dropdownItemClass}><Search size={18} /> Browse All Jobs</Link>
                     <Link to="/jobs/recommended" className={dropdownItemClass}><Zap size={18} /> Recommended for You</Link>
+                    <Link to="/saved" className={dropdownItemClass}><Bookmark size={18} /> Saved Jobs</Link>
                     <Link to="/categories" className={dropdownItemClass}><Globe size={18} /> Job Categories</Link>
                   </div>
                 )}
@@ -143,6 +164,26 @@ const Navbar = () => {
               >
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
+
+              {isAuthenticated && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 transition-all active:scale-95 relative"
+                  >
+                    <Bell size={20} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-2.5 right-2.5 w-4 h-4 bg-secondary text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-[#0B1C2D]">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  <NotificationPanel
+                    isOpen={showNotifications}
+                    onClose={() => setShowNotifications(false)}
+                  />
+                </div>
+              )}
 
               {!isAuthenticated ? (
                 <div className="flex items-center gap-4">
@@ -188,6 +229,11 @@ const Navbar = () => {
                         {user?.userType === 'SEEKER' && (
                           <Link to={ROUTES.SEEKER.PROFILE} className={dropdownItemClass} onClick={() => setActiveDropdown(null)}>
                             <User size={18} /> My Profile
+                          </Link>
+                        )}
+                        {user?.userType === 'SEEKER' && (
+                          <Link to="/saved" className={dropdownItemClass} onClick={() => setActiveDropdown(null)}>
+                            <Bookmark size={18} /> Saved Jobs
                           </Link>
                         )}
                         <Link to="/settings" className={dropdownItemClass} onClick={() => setActiveDropdown(null)}>

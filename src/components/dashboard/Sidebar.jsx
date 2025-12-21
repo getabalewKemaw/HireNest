@@ -76,6 +76,7 @@ const Sidebar = ({ role }) => {
             {
                 title: "Business Tools",
                 items: [
+                    { icon: User, label: 'Company Profile', path: '/employer/profile' },
                     { icon: PieChart, label: 'Hiring Reports', path: '/reports' },
                     { icon: CreditCard, label: 'Billing & Payments', path: '/billing' },
                 ]
@@ -132,8 +133,8 @@ const Sidebar = ({ role }) => {
                                         key={item.label}
                                         to={item.path}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
-                                                ? 'bg-secondary text-white shadow-xl shadow-secondary/20'
-                                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                            ? 'bg-secondary text-white shadow-xl shadow-secondary/20'
+                                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                             }`}
                                     >
                                         {isActive && (

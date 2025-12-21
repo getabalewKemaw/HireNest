@@ -1,66 +1,70 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import notificationService from '../services/notificationService';
 
-const useNotificationStore = create(
-    persist(
-        (set) => ({
-            notifications: [
-                {
-                    id: 'n1',
-                    title: 'Welcome to HireNest!',
-                    message: 'Complete your profile to start hiring the best talent.',
-                    type: 'info',
-                    timestamp: new Date().toISOString(),
-                    read: false
-                }
-            ],
-            unreadCount: 1,
+const useNotificationStore = create((set, get) => ({
+    notifications: [],
+    unreadCount: 0,
+    loading: false,
+    error: null,
 
-            addNotification: (notification) => set((state) => {
-                const newNotification = {
-                    id: Math.random().toString(36).substr(2, 9),
-                    timestamp: new Date().toISOString(),
-                    read: false,
-                    ...notification
-                };
-                const newNotifications = [newNotification, ...state.notifications];
-                return {
-                    notifications: newNotifications,
-                    unreadCount: newNotifications.filter(n => !n.read).length
-                };
-            }),
+    fetchNotifications: async (userId) => {
+        if (!userId) return;
+        set({ loading: true });
+        try {
+            const data = await notificationService.getNotifications(userId);
+            set({
+                notifications: data.content,
+                unreadCount: data.content.filter(n => !n.isRead).length,
+                loading: false
+            });
+        } catch (error) {
+            set({ error: error.message, loading: false });
+        }
+    },
 
-            markAsRead: (id) => set((state) => {
+    fetchUnreadCount: async (userId) => {
+        if (!userId) return;
+        try {
+            const count = await notificationService.getUnreadCount(userId);
+            set({ unreadCount: count });
+        } catch (error) {
+            console.error('Failed to fetch unread count:', error);
+        }
+    },
+
+    markAsRead: async (userId, notificationId) => {
+        try {
+            await notificationService.markAsRead(userId, notificationId);
+            set((state) => {
                 const newNotifications = state.notifications.map(n =>
-                    n.id === id ? { ...n, read: true } : n
+                    n.id === notificationId ? { ...n, isRead: true } : n
                 );
                 return {
                     notifications: newNotifications,
-                    unreadCount: newNotifications.filter(n => !n.read).length
+                    unreadCount: Math.max(0, state.unreadCount - 1)
                 };
-            }),
-
-            markAllAsRead: () => set((state) => {
-                const newNotifications = state.notifications.map(n => ({ ...n, read: true }));
-                return {
-                    notifications: newNotifications,
-                    unreadCount: 0
-                };
-            }),
-
-            clearNotification: (id) => set((state) => {
-                const newNotifications = state.notifications.filter(n => n.id !== id);
-                return {
-                    notifications: newNotifications,
-                    unreadCount: newNotifications.filter(n => !n.read).length
-                };
-            })
-        }),
-        {
-            name: 'hirenest-notifications',
-            storage: createJSONStorage(() => localStorage),
+            });
+        } catch (error) {
+            console.error('Failed to mark as read:', error);
         }
-    )
-);
+    },
+
+    markAllAsRead: async (userId) => {
+        try {
+            await notificationService.markAllAsRead(userId);
+            set((state) => ({
+                notifications: state.notifications.map(n => ({ ...n, isRead: true })),
+                unreadCount: 0
+            }));
+        } catch (error) {
+            console.error('Failed to mark all as read:', error);
+        }
+    },
+
+    addLocalNotification: (notification) => set((state) => ({
+        notifications: [notification, ...state.notifications],
+        unreadCount: state.unreadCount + 1
+    }))
+}));
 
 export default useNotificationStore;

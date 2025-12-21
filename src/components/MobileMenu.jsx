@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../config/constants';
-import { LayoutDashboard, User, LogOut, Search, Users, Briefcase, Globe } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, Search, Users, Briefcase, Globe, Bookmark } from 'lucide-react';
 import Button from './Button';
 
 const MobileMenu = ({
@@ -62,6 +62,11 @@ const MobileMenu = ({
                         {user?.userType === 'SEEKER' && (
                             <Link to={ROUTES.SEEKER.PROFILE} className={menuLinkClass} onClick={() => setIsOpen(false)}>
                                 <User size={20} /> My Profile
+                            </Link>
+                        )}
+                        {user?.userType === 'SEEKER' && (
+                            <Link to="/saved" className={menuLinkClass} onClick={() => setIsOpen(false)}>
+                                <Bookmark size={20} /> Saved Jobs
                             </Link>
                         )}
 

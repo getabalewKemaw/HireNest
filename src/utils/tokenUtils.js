@@ -35,7 +35,7 @@ export const clearAccessToken = () => {
  */
 export const decodeToken = (token) => {
   if (!token) return null;
-  
+
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -45,7 +45,7 @@ export const decodeToken = (token) => {
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    
+
     return JSON.parse(jsonPayload);
   } catch (error) {
     console.error('Error decoding token:', error);
@@ -61,7 +61,7 @@ export const decodeToken = (token) => {
 export const isTokenExpired = (token) => {
   const decoded = decodeToken(token);
   if (!decoded || !decoded.exp) return true;
-  
+
   const currentTime = Date.now() / 1000;
   return decoded.exp < currentTime;
 };
@@ -74,8 +74,9 @@ export const isTokenExpired = (token) => {
 export const getUserFromToken = (token) => {
   const decoded = decodeToken(token);
   if (!decoded) return null;
-  
+
   return {
+    id: decoded.userId,
     email: decoded.sub,
     userType: decoded.userType,
     role: decoded.userType ? `ROLE_${decoded.userType}` : null,
@@ -91,9 +92,9 @@ export const getUserFromToken = (token) => {
 export const isTokenExpiringSoon = (token, bufferMs = 60000) => {
   const decoded = decodeToken(token);
   if (!decoded || !decoded.exp) return true;
-  
+
   const currentTime = Date.now() / 1000;
   const expiryTime = decoded.exp - (bufferMs / 1000);
-  
+
   return currentTime >= expiryTime;
 };

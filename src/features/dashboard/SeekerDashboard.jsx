@@ -12,6 +12,7 @@ import {
     Award,
     MoreHorizontal
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const SeekerDashboard = ({ user, profile }) => {
     const stats = [
@@ -58,21 +59,21 @@ const SeekerDashboard = ({ user, profile }) => {
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="max-w-xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest mb-6">
-                            <Zap size={14} className="text-amber-400" /> Premium Account Active
+                            <Zap size={14} className="text-amber-400" /> Account Active
                         </div>
-                        <h1 className="text-4xl sm:text-5xl font-heading font-black mb-4 leading-[1.1]">
-                            Find your next <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/60">dream role</span> today.
+                        <h1 className="text-4xl sm:text-6xl font-serif font-black mb-6 leading-[1.1]">
+                            Find your next <br /> <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/60 underline decoration-indigo-400 underline-offset-[12px]">dream role</span> today.
                         </h1>
-                        <p className="text-white/70 text-lg font-medium mb-8">
-                            Welcome back, {user?.name?.split(' ')[0] || 'Seeker'}. We've found 15 new job matches that align with your expertise.
+                        <p className="text-white/70 text-lg font-heading font-light mb-10 leading-relaxed">
+                            Welcome back, {profile?.firstName || user?.name?.split(' ')[0] || 'Seeker'}. We've found new job matches that align with your expertise.
                         </p>
                         <div className="flex flex-wrap gap-4">
-                            <button className="px-8 py-4 bg-white text-secondary font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10">
-                                Browse Recommendations
-                            </button>
-                            <button className="px-8 py-4 bg-white/10 border border-white/20 text-white font-black rounded-2xl hover:bg-white/20 transition-all">
-                                Improve Profile
-                            </button>
+                            <Link to="/jobs" className="px-8 py-4 bg-white text-secondary font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10 flex items-center justify-center">
+                                Browse Jobs
+                            </Link>
+                            <Link to="/seeker/profile" className="px-8 py-4 bg-white/10 border border-white/20 text-white font-black rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center">
+                                My Profile
+                            </Link>
                         </div>
                     </div>
 
@@ -82,15 +83,15 @@ const SeekerDashboard = ({ user, profile }) => {
                                 <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                                     <Award size={20} className="text-white" />
                                 </div>
-                                <div className="text-sm font-black">Top 5% Talent</div>
+                                <div className="text-sm font-black">Top Talent</div>
                             </div>
                             <div className="space-y-4">
                                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                                     <div className="h-full bg-emerald-500 w-[85%] rounded-full shadow-sm"></div>
                                 </div>
                                 <div className="flex justify-between text-[10px] font-bold text-white/60 uppercase tracking-widest">
-                                    <span>Expertise Level</span>
-                                    <span>85%</span>
+                                    <span>Profile Completion</span>
+                                    <span>{profile?.profileCompletion || '20%'}</span>
                                 </div>
                             </div>
                         </div>
@@ -127,9 +128,9 @@ const SeekerDashboard = ({ user, profile }) => {
                             <button className="p-2 bg-gray-100 dark:bg-white/5 rounded-xl text-gray-400 hover:text-primary transition-colors">
                                 <Search size={18} />
                             </button>
-                            <button className="px-4 py-2 bg-gray-100 dark:bg-white/5 rounded-xl text-xs font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-wider">
-                                Filter
-                            </button>
+                            <Link to="/jobs" className="px-4 py-2 bg-gray-100 dark:bg-white/5 rounded-xl text-xs font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-wider">
+                                View All
+                            </Link>
                         </div>
                     </div>
 
@@ -170,12 +171,9 @@ const SeekerDashboard = ({ user, profile }) => {
                                         </div>
 
                                         <div className="flex items-center gap-4">
-                                            <button className="px-6 py-2.5 bg-secondary text-white text-xs font-black rounded-xl hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/10 uppercase tracking-widest">
-                                                Apply Now
-                                            </button>
-                                            <button className="px-6 py-2.5 bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-gray-400 text-xs font-black rounded-xl hover:bg-gray-100 dark:hover:bg-white/10 transition-all uppercase tracking-widest">
-                                                Not Interested
-                                            </button>
+                                            <Link to="/jobs" className="px-6 py-2.5 bg-secondary text-white text-xs font-black rounded-xl hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/10 uppercase tracking-widest">
+                                                Explore Jobs
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -193,12 +191,12 @@ const SeekerDashboard = ({ user, profile }) => {
                         </div>
                         <div className="divide-y divide-gray-50 dark:divide-white/5">
                             {recentApps.map((app) => (
-                                <div key={app.id} className="p-6 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer group">
+                                <div key={app.id} className="p-6 hover:bg-gray-50 dark:hover:hover:bg-white/[0.02] transition-colors cursor-pointer group">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md">{app.logo}</div>
                                         <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${app.status === 'Interviewing' ? 'bg-secondary/10 text-secondary' :
-                                                app.status === 'In Review' ? 'bg-amber-500/10 text-amber-500' :
-                                                    'bg-gray-100 dark:bg-white/10 text-gray-400'
+                                            app.status === 'In Review' ? 'bg-amber-500/10 text-amber-500' :
+                                                'bg-gray-100 dark:bg-white/10 text-gray-400'
                                             }`}>
                                             {app.status}
                                         </span>
@@ -211,9 +209,9 @@ const SeekerDashboard = ({ user, profile }) => {
                                 </div>
                             ))}
                         </div>
-                        <button className="w-full p-5 bg-gray-50 dark:bg-white/5 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-secondary hover:text-white transition-all">
+                        <Link to="/applications" className="block w-full text-center p-5 bg-gray-50 dark:bg-white/5 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-secondary hover:text-white transition-all">
                             View All Tracking <ArrowUpRight size={14} className="inline ml-1 mb-1" />
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Quick Tips or Upsell */}
@@ -221,11 +219,13 @@ const SeekerDashboard = ({ user, profile }) => {
                         <div className="relative z-10">
                             <h3 className="text-xl font-black mb-4 leading-tight">Unlock direct <br /> interview invites.</h3>
                             <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                                Verified profiles receive 4x more direct invitations from top companies like Google and Netflix.
+                                Verified profiles receive 4x more direct invitations from top companies.
                             </p>
-                            <button className="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl hover:bg-indigo-400 transition-all shadow-xl shadow-black/20 uppercase tracking-widest text-xs">
-                                Get Verified Level 2
-                            </button>
+                            <Link to="/seeker/profile">
+                                <button className="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl hover:bg-indigo-400 transition-all shadow-xl shadow-black/20 uppercase tracking-widest text-xs">
+                                    Complete Profile
+                                </button>
+                            </Link>
                         </div>
                         <div className="absolute -bottom-4 -right-4 opacity-5 group-hover:scale-110 transition-transform">
                             <CheckCircle2 size={120} />
