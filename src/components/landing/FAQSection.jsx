@@ -32,14 +32,14 @@ const FAQSection = () => {
     };
 
     return (
-        <section className="py-24 bg-gray-50 dark:bg-gray-800/50 transition-colors duration-300">
+        <section className="py-24 bg-white dark:bg-[#0B1C2D] transition-colors duration-500">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="text-secondary dark:text-secondary-light font-bold text-lg mb-2 uppercase tracking-widest">Support</h2>
-                    <h3 className="text-4xl md:text-5xl font-heading font-bold text-primary dark:text-white mb-4">
-                        Got <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-accent">Questions?</span>
+                    <h2 className="text-secondary dark:text-secondary-light font-accent font-black text-xs mb-4 uppercase tracking-[0.2em]">Support</h2>
+                    <h3 className="text-4xl md:text-5xl font-serif font-black text-primary dark:text-white mb-4">
+                        Got <span className="text-secondary italic">Questions?</span>
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto font-light">
+                    <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto font-medium">
                         Everything you need to know about HireNest and how we help you find your next big opportunity.
                     </p>
                 </div>
@@ -48,30 +48,30 @@ const FAQSection = () => {
                     {faqData.map((item, index) => (
                         <div
                             key={index}
-                            className={`group border border-gray-200 dark:border-gray-700 rounded-2xl transition-all duration-300 overflow-hidden ${openIndex === index
-                                    ? 'bg-white dark:bg-gray-800 shadow-xl shadow-primary/5 ring-1 ring-secondary/20'
-                                    : 'hover:border-secondary/30 bg-white/50 dark:bg-gray-900/50'
+                            className={`group border rounded-[2rem] transition-all duration-500 overflow-hidden ${openIndex === index
+                                ? 'bg-gray-50 dark:bg-white/[0.03] border-secondary/20 shadow-2xl shadow-primary/5'
+                                : 'border-gray-100 dark:border-white/5 bg-white/50 dark:bg-white/[0.01] hover:border-secondary/20'
                                 }`}
                         >
                             <button
                                 onClick={() => toggleFAQ(index)}
-                                className="w-full px-8 py-6 flex items-center justify-between text-left focus:outline-none"
+                                className="w-full px-8 py-8 flex items-center justify-between text-left focus:outline-none"
                             >
-                                <span className={`text-lg font-bold transition-colors duration-300 ${openIndex === index ? 'text-secondary dark:text-secondary-light' : 'text-primary dark:text-gray-200'
+                                <span className={`text-xl font-serif font-black transition-colors duration-300 italic ${openIndex === index ? 'text-secondary' : 'text-primary dark:text-gray-200'
                                     }`}>
                                     {item.question}
                                 </span>
-                                <div className={`p-2 rounded-full transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                                <div className={`p-3 rounded-2xl transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-110' : 'bg-gray-100 dark:bg-white/5 text-gray-500'
                                     }`}>
                                     {openIndex === index ? <Minus size={18} /> : <Plus size={18} />}
                                 </div>
                             </button>
 
                             <div
-                                className={`transition-all duration-500 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100 py-6 px-8 border-t border-gray-100 dark:border-gray-700' : 'max-h-0 opacity-0'
+                                className={`transition-all duration-500 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100 py-8 px-8 border-t border-gray-100 dark:border-white/5' : 'max-h-0 opacity-0'
                                     }`}
                             >
-                                <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-medium">
                                     {item.answer}
                                 </p>
                             </div>

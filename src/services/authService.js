@@ -59,17 +59,26 @@ export const login = async (credentials) => {
   }
 };
 
-/**
- * Logout user
- * @returns {Promise<Object>} Logout response
- */
 export const logout = async () => {
   try {
-    await api.post('/api/v1/auth/logout');
+    // 1. Try regular logout
+    try {
+      await api.post('/api/v1/auth/logout');
+    } catch (e) {
+      console.warn('Regular logout failed or already logged out');
+    }
+
+    // 2. Try admin logout
+    try {
+      await api.post('/api/v1/admin/auth/logout');
+    } catch (e) {
+      console.warn('Admin logout failed or already logged out');
+    }
+
     clearAccessToken();
     return { success: true };
   } catch (error) {
-    // Clear token even if API call fails
+    // Clear token even if API calls fail
     clearAccessToken();
     return { success: false, error: handleApiError(error) };
   }
@@ -117,19 +126,28 @@ export const resetPassword = async (resetData) => {
   }
 };
 
-/**
- * Refresh access token
- * @returns {Promise<Object>} Response with new tokens
- */
 export const refreshToken = async () => {
   try {
-    const response = await api.post('/api/v1/auth/refresh');
-
-    if (response.data.accessToken) {
-      setAccessToken(response.data.accessToken);
+    // 1. Try regular user refresh
+    try {
+      const response = await api.post('/api/v1/auth/refresh');
+      if (response.data.accessToken) {
+        setAccessToken(response.data.accessToken);
+        return { success: true, data: response.data };
+      }
+    } catch (e) {
+      // If 401, it might be an admin, continue to next try
+      if (e.response?.status !== 401) throw e;
     }
 
-    return { success: true, data: response.data };
+    // 2. Try admin refresh
+    const adminResponse = await api.post('/api/v1/admin/auth/refresh');
+    if (adminResponse.data.accessToken) {
+      setAccessToken(adminResponse.data.accessToken);
+      return { success: true, data: adminResponse.data };
+    }
+
+    return { success: false, error: { message: 'Refresh failed' } };
   } catch (error) {
     clearAccessToken();
     return { success: false, error: handleApiError(error) };

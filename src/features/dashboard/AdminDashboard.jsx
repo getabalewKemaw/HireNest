@@ -17,6 +17,7 @@ import {
     Mail,
     MoreHorizontal
 } from 'lucide-react';
+import AdminVerificationQueue from '../../components/dashboard/AdminVerificationQueue';
 
 const AdminDashboard = ({ user }) => {
     const stats = [
@@ -92,68 +93,9 @@ const AdminDashboard = ({ user }) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* Verification Queue - Table Style */}
-                <div className="lg:col-span-8 bg-white dark:bg-[#151C26] rounded-[2.5rem] border border-gray-100 dark:border-white/5 overflow-hidden shadow-sm">
-                    <div className="p-8 border-b border-gray-50 dark:border-white/5 bg-gray-50/30 dark:bg-white/[0.01] flex items-center justify-between">
-                        <h3 className="text-xs font-black text-primary dark:text-white uppercase tracking-[0.2em] flex items-center gap-3 italic">
-                            <ShieldCheck className="text-secondary" /> Auth Verification Queue
-                        </h3>
-                        <div className="flex gap-2">
-                            <button className="p-2 text-gray-400 hover:text-primary transition-colors"><Filter size={18} /></button>
-                            <button className="text-secondary text-xs font-black hover:underline uppercase tracking-widest">Global Ops</button>
-                        </div>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-gray-50 dark:border-white/5 bg-gray-50 dark:bg-black/10">
-                                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Target Company</th>
-                                    <th className="px-8 py-5 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                    <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Level</th>
-                                    <th className="px-8 py-5 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-50 dark:divide-white/5">
-                                {verificationQueue.map((item, idx) => (
-                                    <tr key={idx} className="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors">
-                                        <td className="px-8 py-6">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-primary dark:text-white text-lg group-hover:text-secondary italic transition-colors leading-none mb-1">{item.company}</span>
-                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">{item.type} • {item.time}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-6">
-                                            <div className="bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-gray-100 dark:border-white/10 inline-flex items-center gap-2">
-                                                <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                                                <span className="text-[10px] font-black text-gray-500 dark:text-gray-300 uppercase tracking-widest">{item.status}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${item.level === 'Critical' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' :
-                                                    item.level === 'High' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' :
-                                                        'bg-gray-100 dark:bg-white/10 text-gray-400'
-                                                }`}>
-                                                {item.level}
-                                            </span>
-                                        </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <div className="flex gap-2 justify-end">
-                                                <button className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all border border-emerald-500/10 flex items-center justify-center">
-                                                    <CheckCircle size={18} />
-                                                </button>
-                                                <button className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all border border-rose-500/10 flex items-center justify-center">
-                                                    <XCircle size={18} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <button className="w-full py-5 bg-gray-50/50 dark:bg-white/[0.02] border-t border-gray-50 dark:border-white/5 text-[10px] font-black text-secondary tracking-[0.2em] uppercase hover:bg-secondary hover:text-white transition-all">
-                        View Full Authorization Hierarchy <ArrowUpRight size={14} className="inline mb-1 ml-1" />
-                    </button>
+                {/* Verification Queue - Real Data */}
+                <div className="lg:col-span-8">
+                    <AdminVerificationQueue />
                 </div>
 
                 {/* Security / System Logs Aside */}

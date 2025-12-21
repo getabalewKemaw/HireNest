@@ -18,6 +18,7 @@ import SelectRolePage from './pages/auth/SelectRolePage';
 // Admin Pages
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminVerifyOtpPage from './pages/admin/AdminVerifyOtpPage';
+import ApprovalsPage from './pages/admin/ApprovalsPage';
 // Seeker Pages
 import SeekerProfilePage from './pages/seeker/SeekerProfilePage';
 import PlaceholderPage from './pages/PlaceholderPage';
@@ -118,7 +119,7 @@ function AppContent() {
 
           {/* Admin Dashboard Routes */}
           <Route path={ROUTES.ADMIN.DASHBOARD} element={<ProtectedRoute allowedRoles="ADMIN"><DashboardPage /></ProtectedRoute>} />
-          <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="Verification Queue" /></ProtectedRoute>} />
+          <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles="ADMIN"><ApprovalsPage /></ProtectedRoute>} />
           <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="Platform Analytics" /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="User Management" /></ProtectedRoute>} />
           <Route path="/admin/jobs" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="Job Moderation" /></ProtectedRoute>} />

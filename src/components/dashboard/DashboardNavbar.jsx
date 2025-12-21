@@ -1,13 +1,68 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Bell, Menu, User, Moon, Sun, ChevronDown, Settings, LogOut, Shield, ShieldCheck } from 'lucide-react';
+import { Search, Bell, Menu, User, Moon, Sun, ChevronDown, Settings, LogOut, Shield, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
+import useNotificationStore from '../../store/notificationStore';
 
 const DashboardNavbar = ({ onMenuClick }) => {
     const { user, logout } = useAuthStore();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, addNotification } = useNotificationStore();
     const [isDark, setIsDark] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const prevPendingCount = useRef(0);
+    const prevStatus = useRef(null);
     const dropdownRef = useRef(null);
+
+    // Dynamic Polling for both Admin and Employer
+    useEffect(() => {
+        if (!user) return;
+
+        const runPoll = async () => {
+            try {
+                const { default: verificationService } = await import('../../services/verificationService');
+
+                if (user.userType === 'ADMIN') {
+                    const response = await verificationService.getPendingVerifications();
+                    const currentCount = response.data?.length || 0;
+                    if (currentCount > prevPendingCount.current) {
+                        addNotification({
+                            title: 'New Verification Request',
+                            message: `${currentCount} company identity audits pending review.`,
+                            type: 'info'
+                        });
+                    }
+                    prevPendingCount.current = currentCount;
+                } else if (user.userType === 'EMPLOYER') {
+                    const response = await verificationService.getVerificationStatus();
+                    const status = response.data?.status;
+
+                    if (prevStatus.current && status !== prevStatus.current) {
+                        if (status === 'APPROVED') {
+                            addNotification({
+                                title: 'Identity Audit Success!',
+                                message: `Audit for ${response.data.companyName} is approved. Check your email ${user.email} for the 6-digit access code.`,
+                                type: 'success'
+                            });
+                        } else if (status === 'BANNED') {
+                            addNotification({
+                                title: 'Identity Audit Rejected',
+                                message: `Verification for ${response.data.companyName} was rejected: ${response.data.rejectionReason || 'Compliance issues detected.'}`,
+                                type: 'error'
+                            });
+                        }
+                    }
+                    prevStatus.current = status;
+                }
+            } catch (err) {
+                // Silently handle errors in background poll
+            }
+        };
+
+        runPoll();
+        const interval = setInterval(runPoll, 30000); // 30s polling
+        return () => clearInterval(interval);
+    }, [user, addNotification]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -62,10 +117,72 @@ const DashboardNavbar = ({ onMenuClick }) => {
                             {isDark ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
                         </button>
 
-                        <button className="p-3 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-2xl transition-all relative group border border-transparent hover:border-gray-200 dark:hover:border-white/10">
+                        <button
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            className="p-3 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-2xl transition-all relative group border border-transparent hover:border-gray-200 dark:hover:border-white/10"
+                        >
                             <Bell size={20} className="group-hover:rotate-12 transition-transform" />
-                            <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-secondary rounded-full ring-4 ring-white dark:ring-[#0B1C2D]"></span>
+                            {unreadCount > 0 && (
+                                <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-secondary rounded-full ring-4 ring-white dark:ring-[#0B1C2D] animate-pulse"></span>
+                            )}
                         </button>
+
+                        {/* Notifications Dropdown */}
+                        {showNotifications && (
+                            <div className="absolute top-full right-24 mt-3 w-80 sm:w-96 bg-white dark:bg-[#0F2439] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/5 p-4 animate-fade-in z-[60] overflow-hidden">
+                                <div className="flex items-center justify-between px-4 py-2 mb-4">
+                                    <h3 className="text-sm font-black text-primary dark:text-white uppercase tracking-widest italic">Notifications</h3>
+                                    <button
+                                        onClick={markAllAsRead}
+                                        className="text-[10px] font-black text-secondary uppercase tracking-widest hover:underline"
+                                    >
+                                        Mark all read
+                                    </button>
+                                </div>
+
+                                <div className="max-h-[400px] overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                    {notifications.length === 0 ? (
+                                        <div className="py-10 text-center">
+                                            <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                                <Bell size={24} />
+                                            </div>
+                                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">No notifications yet</p>
+                                        </div>
+                                    ) : (
+                                        notifications.map((n) => (
+                                            <div
+                                                key={n.id}
+                                                onClick={() => markAsRead(n.id)}
+                                                className={`p-4 rounded-2xl flex gap-4 transition-all cursor-pointer ${n.read ? 'opacity-60 grayscale-[0.5]' : 'bg-gray-50 dark:bg-white/5 border border-transparent hover:border-secondary/20 hover:bg-secondary/5'}`}
+                                            >
+                                                <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${n.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' :
+                                                    n.type === 'error' ? 'bg-rose-500/10 text-rose-500' :
+                                                        'bg-blue-500/10 text-blue-500'
+                                                    }`}>
+                                                    {n.type === 'success' ? <CheckCircle2 size={18} /> :
+                                                        n.type === 'error' ? <AlertCircle size={18} /> :
+                                                            <Bell size={18} />}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <h4 className="text-xs font-black text-primary dark:text-white leading-tight mb-1 uppercase tracking-tight">{n.title}</h4>
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase whitespace-nowrap">{new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    </div>
+                                                    <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{n.message}</p>
+                                                </div>
+                                                {!n.read && <div className="w-2 h-2 rounded-full bg-secondary mt-1 flex-shrink-0 animate-pulse"></div>}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {notifications.length > 0 && (
+                                    <button className="w-full mt-4 py-3 bg-gray-50 dark:bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-secondary transition-colors">
+                                        View All Notifications
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     <div className="h-10 w-px bg-gray-200 dark:bg-white/10"></div>

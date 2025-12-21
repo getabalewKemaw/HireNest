@@ -1,70 +1,100 @@
+import { Zap, Target, ShieldCheck, Cpu, ArrowUpRight, BarChart3 } from 'lucide-react';
+
 const features = [
     {
-        title: "Smart Matching",
-        description: "Our AI finds jobs that perfectly align with your unique skillset and career ambitions.",
-        icon: (
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-        ),
-        iconColor: "text-blue-600 dark:text-blue-400",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20"
+        title: "AI Precision Matching",
+        description: "Our proprietary neural engine decodes your career DNA to find roles that don't just match your title, but your trajectory.",
+        icon: Cpu,
+        color: "text-secondary",
+        bg: "bg-secondary/10",
+        tag: "Advanced Tech"
     },
     {
-        title: "One-Click Apply",
-        description: "Save time with our streamlined application process. Apply to dozens of roles in seconds.",
-        icon: (
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-        ),
-        iconColor: "text-green-600 dark:text-green-400",
-        bgColor: "bg-green-50 dark:bg-green-900/20"
+        title: "Zero-Friction Applications",
+        description: "Apply to world-class opportunities in milliseconds. We've eliminated the form-filling exhaustion so you can focus on the interview.",
+        icon: Zap,
+        color: "text-amber-500",
+        bg: "bg-amber-500/10",
+        tag: "Efficiency"
     },
     {
-        title: "Verified Companies",
-        description: "We vet every employer to ensure you only deal with legitimate and reputable organizations.",
-        icon: (
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-        ),
-        iconColor: "text-purple-600 dark:text-purple-400",
-        bgColor: "bg-purple-50 dark:bg-purple-900/20"
+        title: "Verified Enterprise Network",
+        description: "Direct access to vetted hiring managers at Fortune 500s and elite startups. No ghosting, no fake listings, total transparency.",
+        icon: ShieldCheck,
+        color: "text-accent",
+        bg: "bg-accent/10",
+        tag: "Security"
     }
 ];
 
 const FeaturesSection = () => {
     return (
-        <section className="py-24 bg-transparent relative z-10 transition-colors duration-300">
+        <section className="py-32 bg-white dark:bg-[#0B1C2D] relative z-10 transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-20 max-w-3xl mx-auto">
-                    <h2 className="text-secondary dark:text-secondary-light font-bold text-lg mb-2 uppercase tracking-widest">Core Features</h2>
-                    <h3 className="text-4xl md:text-5xl font-heading font-bold text-primary dark:text-white mb-6">
-                        Why leading talent chooses <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-accent">HireNest</span>
-                    </h3>
-                    <p className="text-text-secondary dark:text-gray-400 text-lg font-light">
-                        We've redesigned the job search experience to put you in control. Simple, powerful, and transparent.
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 gap-8">
+                    <div className="max-w-3xl">
+                        <div className="inline-flex items-center gap-2 text-secondary font-accent font-black text-[10px] uppercase tracking-[0.25em] mb-6">
+                            <Target size={14} /> The HireNest Difference
+                        </div>
+                        <h2 className="text-5xl md:text-7xl font-serif font-black text-primary dark:text-white leading-[0.95] tracking-tight">
+                            Engineered for <br /> <span className="text-secondary italic">Exceptional</span> Careers.
+                        </h2>
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg font-medium max-w-sm pb-2">
+                        We're not just a job board. We're a career accelerator designed for the top 5% of global talent.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-10">
+                <div className="grid md:grid-cols-3 gap-12">
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="group p-10 rounded-3xl border border-gray-100 dark:border-gray-800 hover:border-transparent hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 bg-white/80 dark:bg-gray-800/50 backdrop-blur-sm"
+                            className="group p-10 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent hover:border-secondary/20 dark:hover:border-white/10 transition-all duration-700 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-2xl hover:shadow-primary/5"
                         >
-                            <div className={`w-20 h-20 ${feature.bgColor} ${feature.iconColor} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm`}>
-                                {feature.icon}
+                            <div className="absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-10 transition-opacity">
+                                <feature.icon size={80} />
                             </div>
-                            <h4 className="text-2xl font-bold text-primary dark:text-white mb-4 group-hover:text-secondary dark:group-hover:text-secondary-light transition-colors">
+
+                            <div className="flex justify-between items-start mb-10">
+                                <div className={`w-16 h-16 ${feature.bg} ${feature.color} rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500`}>
+                                    <feature.icon size={28} />
+                                </div>
+                                <span className="text-[10px] font-accent font-black text-gray-400 uppercase tracking-widest bg-white dark:bg-black/20 px-2.5 py-1 rounded-md border border-gray-100 dark:border-white/5 shadow-sm">
+                                    {feature.tag}
+                                </span>
+                            </div>
+
+                            <h4 className="text-3xl font-serif font-black text-primary dark:text-white mb-6 group-hover:text-secondary transition-colors italic leading-tight">
                                 {feature.title}
                             </h4>
-                            <p className="text-text-secondary dark:text-gray-400 leading-relaxed text-lg font-light">
+                            <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-medium mb-10 flex-grow">
                                 {feature.description}
                             </p>
+
+                            <button className="flex items-center gap-3 text-xs font-accent font-black uppercase tracking-[0.2em] text-primary dark:text-white group-hover:text-secondary transition-all">
+                                Learn More <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </button>
                         </div>
                     ))}
+                </div>
+
+                {/* Bottom Trust CTA */}
+                <div className="mt-20 p-10 rounded-[3rem] bg-[#0B1C2D] dark:bg-white/5 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5 shadow-2xl overflow-hidden relative group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+
+                    <div className="flex items-center gap-6 relative z-10">
+                        <div className="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center text-secondary border border-secondary/20 shadow-lg shadow-black/20">
+                            <BarChart3 size={28} />
+                        </div>
+                        <div>
+                            <h5 className="text-2xl font-serif font-black text-white italic">Real-time market insights.</h5>
+                            <p className="text-gray-400 font-medium">Get paid what you're actually worth.</p>
+                        </div>
+                    </div>
+
+                    <button className="px-10 py-5 bg-white text-primary font-accent font-black rounded-2xl hover:scale-105 transition-all shadow-xl uppercase tracking-widest text-xs relative z-10">
+                        Explore Salary Hub
+                    </button>
                 </div>
             </div>
         </section>

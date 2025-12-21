@@ -14,6 +14,7 @@ import {
     Search,
     ArrowUpRight
 } from 'lucide-react';
+import CompanyVerificationWidget from '../../components/dashboard/CompanyVerificationWidget';
 
 const EmployerDashboard = ({ user }) => {
     const stats = [
@@ -148,8 +149,11 @@ const EmployerDashboard = ({ user }) => {
                     </div>
                 </div>
 
-                {/* Hiring Insights - Column */}
+                {/* Sidebar Column */}
                 <div className="lg:col-span-4 space-y-8">
+                    {/* Verification Widget */}
+                    <CompanyVerificationWidget />
+
                     <div className="bg-primary text-white rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:scale-110 transition-transform blur-md">
                             <TrendingUp size={240} />

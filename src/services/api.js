@@ -72,24 +72,42 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Attempt to refresh token
-        const response = await axios.post(
-          `${API_CONFIG.BASE_URL}/api/v1/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        console.log('🔄 [API] Attempting token refresh...');
+        let accessToken = null;
 
-        const { accessToken } = response.data;
+        // 1. Try regular user refresh
+        try {
+          const response = await axios.post(`${API_CONFIG.BASE_URL}/api/v1/auth/refresh`, {}, { withCredentials: true });
+          accessToken = response.data.accessToken;
+        } catch (e) {
+          if (e.response?.status !== 401) throw e;
+        }
+
+        // 2. Try admin refresh if regular failed
+        if (!accessToken) {
+          try {
+            const adminResponse = await axios.post(`${API_CONFIG.BASE_URL}/api/v1/admin/auth/refresh`, {}, { withCredentials: true });
+            accessToken = adminResponse.data.accessToken;
+          } catch (e) {
+            // Both failed
+            console.error('❌ [API] Both refresh attempts failed');
+            throw e;
+          }
+        }
 
         if (accessToken) {
+          console.log('✅ [API] Token refreshed successfully');
           setAccessToken(accessToken);
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
         }
       } catch (refreshError) {
-        // Refresh failed - clear tokens and redirect to login
+        console.error('❌ [API] Token refresh failed permanently');
         clearAccessToken();
-        window.location.href = '/login';
+        // Only redirect if not already on login page
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       }
     }
