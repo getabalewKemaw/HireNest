@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -39,12 +39,44 @@ function App() {
 
 function AppContent() {
   const { initializeAuth, isCheckingAuth } = useAuthStore();
-  const location = window.location.pathname;
+  const location = useLocation();
 
   // Initialize auth state on app load
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);
+
+  // Determine if Navbar and Footer should be shown
+  const shouldShowLayout = useMemo(() => {
+    const path = location.pathname;
+
+    // Hide layout for Auth pages
+    if (path.startsWith('/auth') || path.startsWith('/admin/auth')) {
+      return false;
+    }
+
+    // Hide layout for Dashboard and related pages
+    const dashboardPaths = [
+      '/dashboard',
+      '/admin/',
+      '/jobs',
+      '/applications',
+      '/messages',
+      '/saved',
+      '/my-jobs',
+      '/work-diary',
+      '/stats',
+      '/earnings',
+      '/post-job',
+      '/talent',
+      '/contracts',
+      '/reports',
+      '/billing',
+      '/settings'
+    ];
+
+    return !dashboardPaths.some(p => path.includes(p));
+  }, [location.pathname]);
 
   if (isCheckingAuth) {
     return (
@@ -59,23 +91,7 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!location.includes('/dashboard') &&
-        !location.includes('/admin/') &&
-        !location.includes('/jobs') &&
-        !location.includes('/applications') &&
-        !location.includes('/messages') &&
-        !location.includes('/saved') &&
-        !location.includes('/my-jobs') &&
-        !location.includes('/work-diary') &&
-        !location.includes('/stats') &&
-        !location.includes('/earnings') &&
-        !location.includes('/post-job') &&
-        !location.includes('/talent') &&
-        !location.includes('/contracts') &&
-        !location.includes('/reports') &&
-        !location.includes('/billing') &&
-        !location.includes('/settings') &&
-        <Navbar />}
+      {shouldShowLayout && <Navbar />}
 
       <main className="flex-grow">
         <Routes>
@@ -133,27 +149,9 @@ function AppContent() {
         </Routes>
       </main>
 
-      {!location.includes('/dashboard') &&
-        !location.includes('/admin/') &&
-        !location.includes('/jobs') &&
-        !location.includes('/applications') &&
-        !location.includes('/messages') &&
-        !location.includes('/saved') &&
-        !location.includes('/my-jobs') &&
-        !location.includes('/work-diary') &&
-        !location.includes('/stats') &&
-        !location.includes('/earnings') &&
-        !location.includes('/post-job') &&
-        !location.includes('/talent') &&
-        !location.includes('/contracts') &&
-        !location.includes('/reports') &&
-        !location.includes('/billing') &&
-        !location.includes('/settings') &&
-        <Footer />}
+      {shouldShowLayout && <Footer />}
     </div>
   );
 }
-
-
 
 export default App;
