@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import {
     Briefcase,
     CheckCircle2,
@@ -10,44 +10,44 @@ import {
     Zap,
     Globe,
     Award,
-    MoreHorizontal
+    MoreHorizontal,
+    Sparkles,
+    Bell
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import jobAlertService from '../../services/jobAlertService';
+import applicationService from '../../services/applicationService';
 
 const SeekerDashboard = ({ user, profile }) => {
+    const [matchedJobs, setMatchedJobs] = useState([]);
+    const [recentApps, setRecentApps] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const stats = [
-        { label: 'Active Applications', value: '12', icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-        { label: 'Upcoming Interviews', value: '3', icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Saved Opportunities', value: '24', icon: Bookmark, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-        { label: 'Profile Visibility', value: 'High', icon: TrendingUp, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+        { label: 'Active Applications', value: recentApps.length, icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+        { label: 'Interviews', value: recentApps.filter(a => a.status === 'INTERVIEWING').length, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+        { label: 'Matched Jobs', value: matchedJobs.length, icon: Sparkles, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+        { label: 'Alerts Active', value: '4', icon: Bell, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
     ];
 
-    const recentApps = [
-        { id: 1, company: 'Google', role: 'Staff Frontend Engineer', status: 'In Review', date: '2h ago', logo: 'G' },
-        { id: 2, company: 'Stripe', role: 'Senior Product Designer', status: 'Interviewing', date: '5h ago', logo: 'S' },
-        { id: 3, company: 'Airbnb', role: 'Full Stack Developer', status: 'Submitted', date: '1d ago', logo: 'A' },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [matchedData, appsData] = await Promise.all([
+                    jobAlertService.getMatchedJobs(),
+                    applicationService.getMyApplications()
+                ]);
+                setMatchedJobs(matchedData || []);
+                setRecentApps(appsData.content || []);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const recommendations = [
-        {
-            id: 1,
-            title: 'Senior Software Architect',
-            company: 'Netflix',
-            location: 'Remote, US',
-            salary: '$190k - $250k',
-            match: '98%',
-            tags: ['React', 'System Design', 'Node.js']
-        },
-        {
-            id: 2,
-            title: 'Global Design Lead',
-            company: 'Figma',
-            location: 'London, UK / Remote',
-            salary: '£140k - £180k',
-            match: '94%',
-            tags: ['UX', 'Product Strategy', 'UI']
-        },
-    ];
+        fetchData();
+    }, []);
 
     return (
         <div className="space-y-10 animate-fade-in pb-12">
@@ -65,14 +65,14 @@ const SeekerDashboard = ({ user, profile }) => {
                             Find your next <br /> <span className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/60 underline decoration-indigo-400 underline-offset-[12px]">dream role</span> today.
                         </h1>
                         <p className="text-white/70 text-lg font-heading font-light mb-10 leading-relaxed">
-                            Welcome back, {profile?.firstName || user?.name?.split(' ')[0] || 'Seeker'}. We've found new job matches that align with your expertise.
+                            Welcome back, {profile?.firstName || user?.name?.split(' ')[0] || 'Seeker'}. We've found {matchedJobs.length} new job matches that align with your expertise.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link to="/jobs" className="px-8 py-4 bg-white text-secondary font-black rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10 flex items-center justify-center">
                                 Browse Jobs
                             </Link>
-                            <Link to="/seeker/profile" className="px-8 py-4 bg-white/10 border border-white/20 text-white font-black rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center">
-                                My Profile
+                            <Link to="/seeker/alerts" className="px-8 py-4 bg-white/10 border border-white/20 text-white font-black rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center">
+                                Job Alerts
                             </Link>
                         </div>
                     </div>
@@ -108,7 +108,7 @@ const SeekerDashboard = ({ user, profile }) => {
                                 <stat.icon size={22} />
                             </div>
                             <div className="flex items-center gap-1 text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg">
-                                <TrendingUp size={12} /> +8.4%
+                                <TrendingUp size={12} /> Live
                             </div>
                         </div>
                         <div className="text-3xl font-black text-primary dark:text-white mb-1">{stat.value}</div>
@@ -122,63 +122,69 @@ const SeekerDashboard = ({ user, profile }) => {
                 <div className="lg:col-span-8 space-y-6">
                     <div className="flex items-center justify-between mb-2">
                         <h2 className="text-2xl font-black text-primary dark:text-white flex items-center gap-3">
-                            <Globe className="text-secondary" /> Jobs you might like
+                            <Sparkles className="text-secondary" /> Premium Matches
                         </h2>
                         <div className="flex gap-2">
-                            <button className="p-2 bg-gray-100 dark:bg-white/5 rounded-xl text-gray-400 hover:text-primary transition-colors">
-                                <Search size={18} />
-                            </button>
-                            <Link to="/jobs" className="px-4 py-2 bg-gray-100 dark:bg-white/5 rounded-xl text-xs font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-wider">
-                                View All
+                            <Link to="/seeker/alerts" className="px-4 py-2 bg-gray-100 dark:bg-white/5 rounded-xl text-xs font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-wider">
+                                Manage Alerts
                             </Link>
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        {recommendations.map((job) => (
-                            <div key={job.id} className="group bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 hover:border-secondary/30 transition-all relative">
-                                <div className="absolute top-6 right-8 flex items-center gap-3">
-                                    <div className="bg-secondary/10 text-secondary text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest border border-secondary/10">
-                                        {job.match} Match
-                                    </div>
-                                    <button className="p-2 text-gray-300 hover:text-primary dark:hover:text-white transition-colors">
-                                        <Bookmark size={20} />
-                                    </button>
-                                </div>
-
-                                <div className="flex items-start gap-6">
-                                    <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center text-2xl font-black text-gray-300 border border-gray-100 dark:border-white/5">
-                                        {job.company.charAt(0)}
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-primary dark:text-white group-hover:text-secondary transition-colors mb-2 uppercase tracking-tight leading-tight">{job.title}</h3>
-                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-gray-400 mb-6">
-                                            <span className="flex items-center gap-1.5">
-                                                <Globe size={14} /> {job.company}
-                                            </span>
-                                            <span>•</span>
-                                            <span>{job.location}</span>
-                                            <span>•</span>
-                                            <span>Est. Budget: <span className="text-emerald-500 font-bold">{job.salary}</span></span>
+                        {loading ? (
+                            [1, 2].map(i => <div key={i} className="h-48 rounded-[2rem] bg-gray-100 dark:bg-white/5 animate-pulse" />)
+                        ) : matchedJobs.length > 0 ? (
+                            matchedJobs.map((job) => (
+                                <div key={job.id} className="group bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5 hover:border-secondary/30 transition-all relative">
+                                    <div className="absolute top-6 right-8 flex items-center gap-3">
+                                        <div className="bg-secondary/10 text-secondary text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest border border-secondary/10">
+                                            Premium Match
                                         </div>
+                                        <button className="p-2 text-gray-300 hover:text-primary dark:hover:text-white transition-colors">
+                                            <Bookmark size={20} />
+                                        </button>
+                                    </div>
 
-                                        <div className="flex flex-wrap gap-2 mb-6">
-                                            {job.tags.map((tag, tIdx) => (
-                                                <span key={tIdx} className="px-3 py-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                    {tag}
+                                    <div className="flex items-start gap-6">
+                                        <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center text-2xl font-black text-gray-300 border border-gray-100 dark:border-white/5 overflow-hidden">
+                                            {job.logoUrl ? (
+                                                <img src={job.logoUrl} alt={job.companyName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                job.companyName?.charAt(0)
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-bold text-primary dark:text-white group-hover:text-secondary transition-colors mb-2 uppercase tracking-tight leading-tight">{job.title}</h3>
+                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-gray-400 mb-6">
+                                                <span className="flex items-center gap-1.5">
+                                                    <Globe size={14} /> {job.companyName}
                                                 </span>
-                                            ))}
-                                        </div>
+                                                <span>•</span>
+                                                <span>{job.city || job.region || 'Remote'}</span>
+                                                <span>•</span>
+                                                <span>{job.currency} <span className="text-emerald-500 font-bold">{job.salaryMin} - {job.salaryMax}</span></span>
+                                            </div>
 
-                                        <div className="flex items-center gap-4">
-                                            <Link to="/jobs" className="px-6 py-2.5 bg-secondary text-white text-xs font-black rounded-xl hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/10 uppercase tracking-widest">
-                                                Explore Jobs
-                                            </Link>
+                                            <div className="flex items-center gap-4">
+                                                <Link to={`/jobs/${job.id}`} className="px-6 py-2.5 bg-secondary text-white text-xs font-black rounded-xl hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/10 uppercase tracking-widest">
+                                                    View Details
+                                                </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="py-20 text-center bg-gray-50 dark:bg-white/5 rounded-[2.5rem] border border-dashed border-gray-200 dark:border-gray-700">
+                                <Sparkles size={40} className="mx-auto text-gray-300 mb-4" />
+                                <h3 className="text-xl font-black text-primary dark:text-white mb-2">No matches yet</h3>
+                                <p className="text-gray-400 text-sm mb-8">Set up job alerts to see personalized recommendations here.</p>
+                                <Link to="/seeker/alerts">
+                                    <Button variant="outline" size="sm">Set Up Job Alerts</Button>
+                                </Link>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 
@@ -186,50 +192,34 @@ const SeekerDashboard = ({ user, profile }) => {
                 <div className="lg:col-span-4 space-y-8">
                     <div className="bg-white dark:bg-white/5 rounded-[2.5rem] border border-gray-100 dark:border-white/5 overflow-hidden shadow-sm">
                         <div className="p-8 border-b border-gray-50 dark:border-white/5 flex items-center justify-between">
-                            <h3 className="font-black text-primary dark:text-white uppercase tracking-[0.15em] text-xs">Recent Activity</h3>
+                            <h3 className="font-black text-primary dark:text-white uppercase tracking-[0.15em] text-xs">Recent Applications</h3>
                             <button className="p-2 hover:bg-gray-50 dark:hover:bg-white/10 rounded-xl transition-all"><MoreHorizontal size={18} className="text-gray-400" /></button>
                         </div>
                         <div className="divide-y divide-gray-50 dark:divide-white/5">
-                            {recentApps.map((app) => (
+                            {recentApps.slice(0, 5).map((app) => (
                                 <div key={app.id} className="p-6 hover:bg-gray-50 dark:hover:hover:bg-white/[0.02] transition-colors cursor-pointer group">
                                     <div className="flex items-center justify-between mb-3">
-                                        <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md">{app.logo}</div>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${app.status === 'Interviewing' ? 'bg-secondary/10 text-secondary' :
-                                            app.status === 'In Review' ? 'bg-amber-500/10 text-amber-500' :
+                                        <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-sm shadow-md overflow-hidden">
+                                            {app.companyLogo ? <img src={app.companyLogo} className="w-full h-full object-cover" /> : app.companyName?.charAt(0)}
+                                        </div>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${app.status === 'INTERVIEWING' ? 'bg-secondary/10 text-secondary' :
+                                            app.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' :
                                                 'bg-gray-100 dark:bg-white/10 text-gray-400'
                                             }`}>
                                             {app.status}
                                         </span>
                                     </div>
-                                    <h4 className="font-bold text-primary dark:text-white group-hover:text-secondary transition-colors truncate">{app.role}</h4>
+                                    <h4 className="font-bold text-primary dark:text-white group-hover:text-secondary transition-colors truncate">{app.jobTitle}</h4>
                                     <div className="flex items-center justify-between mt-1">
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{app.company}</span>
-                                        <span className="text-[10px] text-gray-300">{app.date}</span>
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{app.companyName}</span>
+                                        <span className="text-[10px] text-gray-300 italic">Applied on {new Date(app.appliedAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <Link to="/applications" className="block w-full text-center p-5 bg-gray-50 dark:bg-white/5 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-secondary hover:text-white transition-all">
+                        <Link to="/seeker/applications" className="block w-full text-center p-5 bg-gray-50 dark:bg-white/5 text-[10px] font-black text-secondary uppercase tracking-[0.2em] hover:bg-secondary hover:text-white transition-all">
                             View All Tracking <ArrowUpRight size={14} className="inline ml-1 mb-1" />
                         </Link>
-                    </div>
-
-                    {/* Quick Tips or Upsell */}
-                    <div className="bg-gradient-to-br from-[#0B1C2D] to-indigo-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group">
-                        <div className="relative z-10">
-                            <h3 className="text-xl font-black mb-4 leading-tight">Unlock direct <br /> interview invites.</h3>
-                            <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                                Verified profiles receive 4x more direct invitations from top companies.
-                            </p>
-                            <Link to="/seeker/profile">
-                                <button className="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl hover:bg-indigo-400 transition-all shadow-xl shadow-black/20 uppercase tracking-widest text-xs">
-                                    Complete Profile
-                                </button>
-                            </Link>
-                        </div>
-                        <div className="absolute -bottom-4 -right-4 opacity-5 group-hover:scale-110 transition-transform">
-                            <CheckCircle2 size={120} />
-                        </div>
                     </div>
                 </div>
             </div>

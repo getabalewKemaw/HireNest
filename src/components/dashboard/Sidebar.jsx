@@ -34,6 +34,7 @@ const Sidebar = ({ role }) => {
                 items: [
                     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
                     { icon: Search, label: 'Find Work', path: '/jobs' },
+                    { icon: Bell, label: 'Job Alerts', path: '/alerts' },
                     { icon: Bookmark, label: 'Saved Jobs', path: '/saved' },
                     { icon: MessageSquare, label: 'Messages', path: '/messages' },
                 ]

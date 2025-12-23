@@ -27,6 +27,7 @@ import JobBoardPage from './pages/seeker/JobBoardPage';
 import JobDetailPage from './pages/seeker/JobDetailPage';
 import MyApplicationsPage from './pages/seeker/MyApplicationsPage';
 import SavedJobsPage from './pages/seeker/SavedJobsPage';
+import JobAlertsPage from './pages/seeker/JobAlertsPage';
 import CVBuilderPage from './pages/seeker/CVBuilderPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
@@ -89,7 +90,8 @@ function AppContent() {
       '/reports',
       '/billing',
       '/settings',
-      '/cv-builder'
+      '/cv-builder',
+      '/alerts'
     ];
 
     // Special handling: 
@@ -143,6 +145,7 @@ function AppContent() {
           <Route path="/jobs/:id" element={<ProtectedRoute><DashboardLayout><JobDetailPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/applications" element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><MyApplicationsPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/saved" element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><SavedJobsPage /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/alerts" element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><JobAlertsPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/cv-builder" element={<ProtectedRoute allowedRoles="SEEKER"><CVBuilderPage /></ProtectedRoute>} />
           <Route path={ROUTES.SEEKER.PROFILE} element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><SeekerProfilePage /></DashboardLayout></ProtectedRoute>} />
 
