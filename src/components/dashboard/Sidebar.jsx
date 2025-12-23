@@ -50,6 +50,7 @@ const Sidebar = ({ role }) => {
                 title: "Career & Growth",
                 items: [
                     { icon: User, label: 'My Profile', path: '/seeker/profile' },
+                    { icon: FileText, label: 'CV Builder', path: '/cv-builder' },
                     { icon: Zap, label: 'My Stats', path: '/stats' },
                     { icon: CreditCard, label: 'Earnings', path: '/earnings' },
                 ]
@@ -102,6 +103,7 @@ const Sidebar = ({ role }) => {
             {
                 title: "Platform Admin",
                 items: [
+                    { icon: FileText, label: 'CV Templates', path: '/admin/cv-templates' },
                     { icon: CreditCard, label: 'Financials', path: '/admin/financials' },
                     { icon: HelpCircle, label: 'Support Tickets', path: '/admin/support' },
                     { icon: Settings, label: 'System Settings', path: '/admin/settings' },

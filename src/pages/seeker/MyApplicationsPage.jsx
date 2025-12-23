@@ -91,6 +91,17 @@ const MyApplicationsPage = () => {
                                         </div>
                                     )}
 
+                                    {app.status === 'REJECTED' && app.rejectionReason && (
+                                        <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-2xl relative mt-2">
+                                            <div className="absolute -top-2.5 left-4 px-2 bg-white dark:bg-gray-800 text-[9px] font-black text-red-500 uppercase tracking-widest flex items-center gap-1">
+                                                <XCircle size={10} /> Rejection Reason
+                                            </div>
+                                            <p className="text-xs text-red-600 dark:text-red-400 font-medium italic leading-relaxed pt-1">
+                                                "{app.rejectionReason}"
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <Link to={`/jobs/${app.jobId}`}>
                                         <Button variant="outline" fullWidth size="md">
                                             View Position Details

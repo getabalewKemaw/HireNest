@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { FileText, Upload, Download, Trash2, Eye, CheckCircle2, Loader2, AlertCircle, X, Maximize2 } from 'lucide-react';
 import Button from '../../Button';
 import useSeekerStore from '../../../store/seekerStore';
+import PdfViewerModal from '../../modals/PdfViewerModal';
+import { downloadFile } from '../../../utils/downloadUtils';
 
 const CVSection = () => {
     const { media, uploadCVFile, deleteCVFile, isLoading } = useSeekerStore();
@@ -59,9 +61,6 @@ const CVSection = () => {
                 });
             }, 200);
 
-            console.log('=== Uploading CV ===');
-            console.log('File:', file.name, file.type, `${(file.size / 1024).toFixed(2)} KB`);
-
             await uploadCVFile(file);
 
             clearInterval(progressInterval);
@@ -71,11 +70,8 @@ const CVSection = () => {
 
             // Clear success message after 5 seconds
             setTimeout(() => setSuccess(''), 5000);
-
-            console.log('CV uploaded successfully!');
         } catch (err) {
-            console.error('=== Failed to upload CV ===');
-            console.error('Error:', err);
+            console.error('Failed to upload CV:', err);
             setError(err.message || 'Failed to upload CV. Please try again.');
         } finally {
             setUploading(false);
@@ -96,23 +92,24 @@ const CVSection = () => {
     };
 
     const handleViewCV = () => {
-        // Check if it's a PDF
-        if (media?.cvUrl?.toLowerCase().endsWith('.pdf')) {
+        if (!media?.cvUrl) return;
+        const isPdf = media.cvUrl.toLowerCase().endsWith('.pdf');
+        if (isPdf) {
             setShowPdfViewer(true);
         } else {
-            // For DOC/DOCX, open in new tab
             window.open(media.cvUrl, '_blank');
         }
+    };
+
+    const handleDownload = () => {
+        if (!media?.cvUrl) return;
+        downloadFile(media.cvUrl, `Resume_${getFileName(media.cvUrl)}`);
     };
 
     const getFileName = (url) => {
         if (!url) return 'CV Document';
         const parts = url.split('/');
         return decodeURIComponent(parts[parts.length - 1]);
-    };
-
-    const isPdf = () => {
-        return media?.cvUrl?.toLowerCase().endsWith('.pdf');
     };
 
     return (
@@ -125,24 +122,23 @@ const CVSection = () => {
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-primary dark:text-white">Curriculum Vitae</h2>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Upload your resume (PDF, DOC, DOCX -Max 5MB)</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Upload your resume (PDF, DOC, DOCX - Max 5MB)</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Success Message */}
+                {/* Status Messages */}
                 {success && (
-                    <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl flex items-center gap-3">
+                    <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl flex items-center gap-3 animate-in slide-in-from-top-2">
                         <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
-                        <p className="text-sm text-green-600 dark:text-green-400">{success}</p>
+                        <p className="text-sm text-green-600 dark:text-green-400 font-medium">{success}</p>
                     </div>
                 )}
 
-                {/* Error Message */}
                 {error && (
-                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl flex items-center gap-3">
+                    <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl flex items-center gap-3 animate-in slide-in-from-top-2">
                         <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                        <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
                     </div>
                 )}
 
@@ -152,7 +148,7 @@ const CVSection = () => {
                         <div className="flex items-center gap-3 mb-3">
                             <Loader2 className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-spin" />
                             <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                                Uploading {selectedFile?.name}...
+                                Uploading resume...
                             </p>
                         </div>
                         <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
@@ -161,7 +157,6 @@ const CVSection = () => {
                                 style={{ width: `${uploadProgress}%` }}
                             ></div>
                         </div>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 text-right">{uploadProgress}%</p>
                     </div>
                 )}
 
@@ -172,32 +167,25 @@ const CVSection = () => {
                             <CheckCircle2 size={32} />
                         </div>
                         <div className="flex-1 text-center sm:text-left">
-                            <p className="font-bold text-primary dark:text-white mb-1">CV Uploaded Successfully</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{getFileName(media.cvUrl)}</p>
-                            {isPdf() && (
-                                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">✓ PDF Preview Available</p>
-                            )}
+                            <p className="font-bold text-primary dark:text-white mb-1">Resume Uploaded Successfully</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{getFileName(media.cvUrl)}</p>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap justify-center gap-2">
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                icon={isPdf() ? <Maximize2 size={16} /> : <Eye size={16} />}
+                                icon={<Eye size={16} />}
                                 onClick={handleViewCV}
                             >
-                                {isPdf() ? 'Preview' : 'View'}
+                                Preview
                             </Button>
-                            <a href={media.cvUrl} download>
-                                <Button variant="outline" size="sm" icon={<Download size={16} />}>Download</Button>
-                            </a>
                             <Button
                                 variant="outline"
                                 size="sm"
-                                icon={<Upload size={16} />}
-                                onClick={() => fileRef.current.click()}
-                                disabled={uploading}
+                                icon={<Download size={16} />}
+                                onClick={handleDownload}
                             >
-                                Replace
+                                Download
                             </Button>
                             <Button
                                 variant="ghost"
@@ -205,7 +193,7 @@ const CVSection = () => {
                                 icon={<Trash2 size={16} />}
                                 onClick={handleDelete}
                                 disabled={uploading}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             >
                                 Delete
                             </Button>
@@ -215,7 +203,7 @@ const CVSection = () => {
                             ref={fileRef}
                             onChange={handleFileSelect}
                             hidden
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept=".pdf,.doc,.docx"
                         />
                     </div>
                 ) : (
@@ -231,7 +219,7 @@ const CVSection = () => {
                             {uploading ? <Loader2 size={32} className="animate-spin" /> : <Upload size={32} />}
                         </div>
                         <h3 className="text-lg font-bold text-primary dark:text-white mb-2">
-                            {uploading ? 'Uploading...' : 'Upload Resume'}
+                            {uploading ? 'Processing...' : 'Upload Resume'}
                         </h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto mb-4">
                             Click to browse or drag and drop your CV here
@@ -244,59 +232,19 @@ const CVSection = () => {
                             ref={fileRef}
                             onChange={handleFileSelect}
                             hidden
-                            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            accept=".pdf,.doc,.docx"
                             disabled={uploading}
                         />
                     </div>
                 )}
             </section>
 
-            {/* PDF Viewer Modal */}
-            {showPdfViewer && media?.cvUrl && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-                    onClick={() => setShowPdfViewer(false)}
-                >
-                    <div
-                        className="relative w-full h-full max-w-6xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Header */}
-                        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-                            <div className="flex items-center gap-3">
-                                <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                                <h3 className="font-bold text-gray-900 dark:text-white">CV Preview</h3>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                    {getFileName(media.cvUrl)}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <a href={media.cvUrl} download>
-                                    <Button variant="ghost" size="sm" icon={<Download size={16} />}>
-                                        Download
-                                    </Button>
-                                </a>
-                                <button
-                                    onClick={() => setShowPdfViewer(false)}
-                                    className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                                >
-                                    <X size={20} />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* PDF Viewer */}
-                        <div className="w-full h-[calc(100%-4rem)]">
-                            <iframe
-                                src={media.cvUrl}
-                                className="w-full h-full"
-                                title="CV Preview"
-                                frameBorder="0"
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
+            <PdfViewerModal
+                isOpen={showPdfViewer}
+                onClose={() => setShowPdfViewer(false)}
+                pdfUrl={media?.cvUrl}
+                title="Your Professional CV"
+            />
         </>
     );
 };

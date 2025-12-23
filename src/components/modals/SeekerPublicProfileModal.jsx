@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import { X, Mail, Phone, Calendar, MapPin, ExternalLink, Download, User, Briefcase, GraduationCap, Cpu, Globe, Award } from 'lucide-react';
+import { X, Mail, Phone, Calendar, MapPin, ExternalLink, Download, User, Briefcase, Cpu, Globe, Award, FileText } from 'lucide-react';
 import * as seekerService from '../../services/seekerService';
 import Button from '../Button';
+import PdfViewerModal from './PdfViewerModal';
+import { downloadFile } from '../../utils/downloadUtils';
 
 const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showPdfViewer, setShowPdfViewer] = useState(false);
 
     useEffect(() => {
         if (isOpen && seekerId) {
@@ -32,9 +35,13 @@ const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
         }
     };
 
+    const handleDownloadCV = (url, name) => {
+        downloadFile(url, `${name.replace(/\s+/g, '_')}_CV.pdf`);
+    };
+
     if (!isOpen) return null;
 
-    const { basicInfo, bio, skills, projects, sectors, tags, socialLinks, cv } = profile || {};
+    const { basicInfo, bio, skills, projects, tags, socialLinks, cv } = profile || {};
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 pb-20 sm:pb-6">
@@ -94,7 +101,7 @@ const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
                             <div className="space-y-6">
                                 {/* Contact Info */}
                                 <div className="bg-white dark:bg-[#111820] rounded-[2rem] p-8 border border-gray-100 dark:border-white/5 shadow-sm">
-                                    <h3 className="text-[10px] uppercase font-black tracking-widest text-gray-400 mb-6">Contact & Details</h3>
+                                    <h3 className="text-[10px] uppercase font-black tracking-widest text-gray-400 mb-6 font-heading">Contact & Details</h3>
                                     <div className="space-y-5">
                                         <div className="flex items-center gap-4 group">
                                             <div className="p-2.5 bg-gray-50 dark:bg-gray-800 rounded-xl group-hover:bg-secondary/10 group-hover:text-secondary transition-all">
@@ -141,25 +148,35 @@ const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
                                     </div>
                                 </div>
 
-                                {/* CV Download */}
+                                {/* CV Viewer & Download */}
                                 {cv && (
-                                    <a
-                                        href={cv.cvUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-between p-6 bg-gradient-to-r from-secondary to-secondary-light rounded-[2rem] text-white group hover:shadow-xl hover:shadow-secondary/20 transition-all cursor-pointer"
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
-                                                <Download size={20} />
+                                    <div className="flex flex-col gap-3">
+                                        <div
+                                            onClick={() => setShowPdfViewer(true)}
+                                            className="flex items-center justify-between p-6 bg-gradient-to-r from-secondary to-secondary-light rounded-[2rem] text-white group hover:shadow-xl hover:shadow-secondary/20 transition-all cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-md">
+                                                    <FileText size={20} />
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-sm">View Professional CV</p>
+                                                    <p className="text-[10px] opacity-70">PDF Document</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="font-black text-sm">Download CV/Resume</p>
-                                                <p className="text-[10px] opacity-70">PDF Document</p>
-                                            </div>
+                                            <ExternalLink size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
-                                        <ExternalLink size={18} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </a>
+                                        <Button
+                                            variant="outline"
+                                            size="md"
+                                            fullWidth
+                                            className="rounded-[2rem] border-secondary/20 text-secondary hover:bg-secondary/5"
+                                            icon={<Download size={18} />}
+                                            onClick={() => handleDownloadCV(cv.cvUrl, basicInfo?.firstName)}
+                                        >
+                                            Download for Offline
+                                        </Button>
+                                    </div>
                                 )}
                             </div>
 
@@ -174,8 +191,8 @@ const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
                                             </div>
                                             <h2 className="text-xl font-bold text-primary dark:text-white">Professional Summary</h2>
                                         </div>
-                                        <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-400 leading-relaxed text-sm whitespace-pre-wrap">
-                                            {bio.bio}
+                                        <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-400 leading-relaxed text-sm whitespace-pre-wrap font-heading italic">
+                                            "{bio.bio}"
                                         </div>
                                     </section>
                                 )}
@@ -257,6 +274,13 @@ const SeekerPublicProfileModal = ({ isOpen, onClose, seekerId }) => {
                     <Button variant="primary" size="sm" onClick={() => window.location.href = `mailto:${basicInfo?.email}`}>Contact Applicant</Button>
                 </div>
             </div>
+
+            <PdfViewerModal
+                isOpen={showPdfViewer}
+                onClose={() => setShowPdfViewer(false)}
+                pdfUrl={cv?.cvUrl}
+                title={`${basicInfo?.firstName}'s CV`}
+            />
         </div>
     );
 };

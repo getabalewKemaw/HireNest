@@ -20,12 +20,14 @@ import SelectRolePage from './pages/auth/SelectRolePage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminVerifyOtpPage from './pages/admin/AdminVerifyOtpPage';
 import ApprovalsPage from './pages/admin/ApprovalsPage';
+import AdminCVTemplatesPage from './pages/admin/AdminCVTemplatesPage';
 // Seeker Pages
 import SeekerProfilePage from './pages/seeker/SeekerProfilePage';
 import JobBoardPage from './pages/seeker/JobBoardPage';
 import JobDetailPage from './pages/seeker/JobDetailPage';
 import MyApplicationsPage from './pages/seeker/MyApplicationsPage';
 import SavedJobsPage from './pages/seeker/SavedJobsPage';
+import CVBuilderPage from './pages/seeker/CVBuilderPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 // Employer Pages
@@ -86,13 +88,14 @@ function AppContent() {
       '/contracts',
       '/reports',
       '/billing',
-      '/settings'
+      '/settings',
+      '/cv-builder'
     ];
 
     // Special handling: 
     // Seeker Job Board (/jobs) USES DashboardLayout -> Hide Main Navbar.
     // Employer Manage Jobs (/jobs/manage) USES Main Navbar -> Show Main Navbar.
-    if (path === '/jobs' || path.startsWith('/jobs/') && !path.includes('/manage')) {
+    if (path === '/jobs' || (path.startsWith('/jobs/') && !path.includes('/manage'))) {
       return false; // Hide Main Navbar for Seeker Jobs
     }
 
@@ -140,6 +143,7 @@ function AppContent() {
           <Route path="/jobs/:id" element={<ProtectedRoute><DashboardLayout><JobDetailPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/applications" element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><MyApplicationsPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/saved" element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><SavedJobsPage /></DashboardLayout></ProtectedRoute>} />
+          <Route path="/cv-builder" element={<ProtectedRoute allowedRoles="SEEKER"><CVBuilderPage /></ProtectedRoute>} />
           <Route path={ROUTES.SEEKER.PROFILE} element={<ProtectedRoute allowedRoles="SEEKER"><DashboardLayout><SeekerProfilePage /></DashboardLayout></ProtectedRoute>} />
 
           {/* Employer Dashboard Routes */}
@@ -151,6 +155,7 @@ function AppContent() {
           {/* Admin Dashboard Routes */}
           <Route path={ROUTES.ADMIN.DASHBOARD} element={<ProtectedRoute allowedRoles="ADMIN"><DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles="ADMIN"><ApprovalsPage /></ProtectedRoute>} />
+          <Route path="/admin/cv-templates" element={<ProtectedRoute allowedRoles="ADMIN"><DashboardLayout><AdminCVTemplatesPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="Platform Analytics" /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="User Management" /></ProtectedRoute>} />
           <Route path="/admin/jobs" element={<ProtectedRoute allowedRoles="ADMIN"><PlaceholderPage title="Job Moderation" /></ProtectedRoute>} />

@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, FileText, DollarSign,
-    User, CheckCircle2, XCircle, ExternalLink
+    User, CheckCircle2, XCircle, ExternalLink, Download
 } from 'lucide-react';
 import applicationService from '../../services/applicationService';
 import Button from '../../components/Button';
 import SeekerPublicProfileModal from '../../components/modals/SeekerPublicProfileModal';
+import PdfViewerModal from '../../components/modals/PdfViewerModal';
+import RejectionModal from '../../components/modals/RejectionModal';
+import { downloadFile } from '../../utils/downloadUtils';
 
 const ApplicantsPage = () => {
     const [searchParams] = useSearchParams();
@@ -17,6 +20,10 @@ const ApplicantsPage = () => {
     const [selectedApp, setSelectedApp] = useState(null);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [selectedSeekerId, setSelectedSeekerId] = useState(null);
+    const [showPdfViewer, setShowPdfViewer] = useState(false);
+    const [cvUrl, setCvUrl] = useState(null);
+    const [showRejectionModal, setShowRejectionModal] = useState(false);
+    const [rejectionTarget, setRejectionTarget] = useState(null);
 
     useEffect(() => {
         if (jobId) fetchApplications();
@@ -33,14 +40,18 @@ const ApplicantsPage = () => {
         }
     };
 
-    const updateStatus = async (appId, status, notes = '') => {
+    const updateStatus = async (appId, status, rejectionReason = '', notes = '') => {
         try {
-            await applicationService.updateStatus(appId, { status, notes });
+            await applicationService.updateStatus(appId, { status, notes, rejectionReason });
             fetchApplications();
             if (selectedApp?.id === appId) setSelectedApp(null);
         } catch (error) {
             console.error('Error updating status:', error);
         }
+    };
+
+    const handleDownloadCV = (url, name) => {
+        downloadFile(url, `${name.replace(/\s+/g, '_')}_CV.pdf`);
     };
 
     if (loading) return (
@@ -117,7 +128,10 @@ const ApplicantsPage = () => {
                                         </div>
                                     </div>
                                     <div className="flex gap-3">
-                                        <Button variant="outline" size="md" onClick={() => updateStatus(selectedApp.id, 'REJECTED')}>
+                                        <Button variant="outline" size="md" onClick={() => {
+                                            setRejectionTarget(selectedApp);
+                                            setShowRejectionModal(true);
+                                        }}>
                                             <XCircle size={18} className="mr-2 text-red-500" /> Reject
                                         </Button>
                                         <Button variant="secondary" size="md" onClick={() => updateStatus(selectedApp.id, 'APPROVED')}>
@@ -151,13 +165,30 @@ const ApplicantsPage = () => {
                                         <div>
                                             <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Documents</h4>
                                             {selectedApp.cvUrl ? (
-                                                <a href={selectedApp.cvUrl} target="_blank" rel="noreferrer" className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-700 group hover:border-secondary transition-all">
-                                                    <div className="flex items-center gap-3">
-                                                        <FileText size={20} className="text-secondary" />
-                                                        <span className="text-sm font-bold text-primary dark:text-white">Professional CV / Resume</span>
+                                                <div className="flex flex-col gap-3">
+                                                    <div
+                                                        onClick={() => {
+                                                            setCvUrl(selectedApp.cvUrl);
+                                                            setShowPdfViewer(true);
+                                                        }}
+                                                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-100 dark:border-gray-700 group hover:border-secondary transition-all cursor-pointer"
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <FileText size={20} className="text-secondary" />
+                                                            <span className="text-sm font-bold text-primary dark:text-white">View Professional CV</span>
+                                                        </div>
+                                                        <ExternalLink size={16} className="text-gray-300 group-hover:text-secondary" />
                                                     </div>
-                                                    <ExternalLink size={16} className="text-gray-300 group-hover:text-secondary" />
-                                                </a>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        fullWidth
+                                                        icon={<Download size={14} />}
+                                                        onClick={() => handleDownloadCV(selectedApp.cvUrl, selectedApp.seekerName)}
+                                                    >
+                                                        Download PDF
+                                                    </Button>
+                                                </div>
                                             ) : (
                                                 <div className="text-sm text-gray-400 italic">No CV uploaded.</div>
                                             )}
@@ -189,6 +220,20 @@ const ApplicantsPage = () => {
                 isOpen={showProfileModal}
                 onClose={() => setShowProfileModal(false)}
                 seekerId={selectedSeekerId}
+            />
+
+            <PdfViewerModal
+                isOpen={showPdfViewer}
+                onClose={() => setShowPdfViewer(false)}
+                pdfUrl={cvUrl}
+                title={`${selectedApp?.seekerName}'s CV`}
+            />
+
+            <RejectionModal
+                isOpen={showRejectionModal}
+                onClose={() => setShowRejectionModal(false)}
+                applicantName={rejectionTarget?.seekerName}
+                onConfirm={(reason) => updateStatus(rejectionTarget.id, 'REJECTED', reason)}
             />
         </div>
     );

@@ -101,8 +101,8 @@ const ProjectDetailModal = ({ project, onClose }) => {
                                                 key={index}
                                                 onClick={() => setCurrentImageIndex(index)}
                                                 className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${index === currentImageIndex
-                                                        ? 'border-blue-500 scale-110 shadow-lg'
-                                                        : 'border-white/50 hover:border-white opacity-70 hover:opacity-100'
+                                                    ? 'border-blue-500 scale-110 shadow-lg'
+                                                    : 'border-white/50 hover:border-white opacity-70 hover:opacity-100'
                                                     }`}
                                             >
                                                 <img

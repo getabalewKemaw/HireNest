@@ -103,7 +103,6 @@ const JobCard = ({ job }) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
-
     return (
         <div className="group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/50 p-6 rounded-2xl hover:shadow-[0_20px_50px_rgba(11,28,45,0.08)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 relative overflow-hidden flex flex-col h-full">
             {/* Decorative Gradient on Hover */}

@@ -93,5 +93,4 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
         </div>
     );
 };
-
 export default AuthLayout;

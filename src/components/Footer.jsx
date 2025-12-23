@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../config/constants';
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-primary dark:bg-gray-950 text-white pt-24 pb-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,5 +109,4 @@ const Footer = () => {
     </footer>
   );
 };
-
 export default Footer;

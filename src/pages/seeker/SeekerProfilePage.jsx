@@ -17,6 +17,8 @@ import TagSection from '../../components/seeker/details/TagSection';
 import SocialLinksSection from '../../components/seeker/details/SocialLinksSection';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
+import SeekerPublicProfileModal from '../../components/modals/SeekerPublicProfileModal';
+import { Eye } from 'lucide-react';
 
 const SeekerProfilePage = () => {
     const { user, isCheckingAuth, isAuthenticated } = useAuthStore();
@@ -28,6 +30,7 @@ const SeekerProfilePage = () => {
 
     const [editMode, setEditMode] = useState(null); // 'basic', 'address', null
     const [successMessage, setSuccessMessage] = useState('');
+    const [showPublicPreview, setShowPublicPreview] = useState(false);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -154,9 +157,17 @@ const SeekerProfilePage = () => {
                                 <h1 className="text-2xl sm:text-3xl font-black text-primary dark:text-white tracking-tight">
                                     {profile ? `${profile.firstName} ${profile.lastName || ''}` : user?.name || 'Welcome!'}
                                 </h1>
-                                <p className="text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
-                                    <Mail size={16} /> {profile?.email || user?.email}
-                                </p>
+                                <div className="flex flex-wrap items-center gap-4 mt-1">
+                                    <p className="text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
+                                        <Mail size={16} /> {profile?.email || user?.email}
+                                    </p>
+                                    <button
+                                        onClick={() => setShowPublicPreview(true)}
+                                        className="text-xs font-black uppercase tracking-widest text-secondary hover:text-secondary-dark flex items-center gap-2 transition-all"
+                                    >
+                                        <Eye size={14} /> View Public View
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -409,6 +420,12 @@ const SeekerProfilePage = () => {
                     </div>
                 </div>
             </div>
+
+            <SeekerPublicProfileModal
+                isOpen={showPublicPreview}
+                onClose={() => setShowPublicPreview(false)}
+                seekerId={user?.id}
+            />
         </div>
     );
 };
