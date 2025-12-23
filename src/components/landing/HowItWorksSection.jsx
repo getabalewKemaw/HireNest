@@ -14,16 +14,16 @@ const steps = [
         title: "Intelligent Match Engine",
         desc: "Our AI curates opportunities based on 50+ unique career data points, ensuring every match is high-value.",
         icon: Search,
-        color: "text-amber-500",
-        bg: "bg-amber-500/10"
+        color: "text-secondary",
+        bg: "bg-secondary/10"
     },
     {
         num: "03",
         title: "Direct Pipeline Hiring",
         desc: "Skip the noise. Enter direct pipelines for elite companies and secure your next role with confidence.",
         icon: Rocket,
-        color: "text-emerald-500",
-        bg: "bg-emerald-500/10"
+        color: "text-secondary",
+        bg: "bg-secondary/10"
     }
 ];
 
@@ -31,21 +31,22 @@ const HowItWorksSection = () => {
     return (
         <section className="py-32 bg-transparent relative z-10 transition-colors duration-500 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Centered Heading Section */}
+                <div className="text-center mb-16 space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-secondary/10 text-secondary text-[10px] font-accent font-black uppercase tracking-[0.2em]">
+                        <Rocket size={14} /> Streamlined Velocity
+                    </div>
+                    <h2 className="text-5xl md:text-7xl font-serif font-black text-primary dark:text-white leading-[0.95] tracking-tight">
+                        How it <span className="text-secondary italic">works.</span>
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 text-xl font-serif leading-relaxed max-w-xl mx-auto">
+                        We've re-engineered the job search from the ground up. No more endless forms. No more ghosting. Just progress.
+                    </p>
+                </div>
+
                 <div className="lg:grid lg:grid-cols-2 gap-24 items-center">
                     {/* Left: Interactive List */}
                     <div className="mb-16 lg:mb-0 space-y-12">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-secondary/10 text-secondary text-[10px] font-accent font-black uppercase tracking-[0.2em] mb-6">
-                                <Rocket size={14} /> Streamlined Velocity
-                            </div>
-                            <h2 className="text-5xl md:text-7xl font-serif font-black text-primary dark:text-white leading-[0.95] tracking-tight mb-8">
-                                How it <br /><span className="text-secondary italic">works.</span>
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-xl font-medium leading-relaxed max-w-xl">
-                                We've re-engineered the job search from the ground up. No more endless forms. No more ghosting. Just progress.
-                            </p>
-                        </div>
-
                         <div className="space-y-4">
                             {steps.map((step, idx) => (
                                 <div key={idx} className="group p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-transparent hover:border-gray-100 dark:hover:border-white/10 transition-all hover:shadow-xl hover:shadow-primary/5 cursor-pointer relative">
@@ -61,7 +62,7 @@ const HowItWorksSection = () => {
                                             <h4 className="text-2xl font-serif font-black text-primary dark:text-white mb-2 italic group-hover:text-secondary transition-colors leading-none">
                                                 {step.title}
                                             </h4>
-                                            <p className="text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+                                            <p className="text-gray-500 dark:text-gray-400 font-serif leading-relaxed">
                                                 {step.desc}
                                             </p>
                                         </div>
@@ -94,11 +95,11 @@ const HowItWorksSection = () => {
                                     <div className="flex-1">
                                         <div className="text-xs font-accent font-black text-white italic">Hiring Team Active</div>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></div>
                                             <div className="text-[10px] font-accent font-bold text-gray-300 uppercase tracking-widest">Verifying Candidates</div>
                                         </div>
                                     </div>
-                                    <CheckCircle2 className="text-emerald-500" />
+                                    <CheckCircle2 className="text-secondary" />
                                 </div>
                             </div>
                         </div>

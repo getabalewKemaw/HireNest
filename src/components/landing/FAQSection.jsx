@@ -39,7 +39,7 @@ const FAQSection = () => {
                     <h3 className="text-4xl md:text-5xl font-serif font-black text-primary dark:text-white mb-4">
                         Got <span className="text-secondary italic">Questions?</span>
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto font-medium">
+                    <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto font-serif">
                         Everything you need to know about HireNest and how we help you find your next big opportunity.
                     </p>
                 </div>
@@ -61,7 +61,7 @@ const FAQSection = () => {
                                     }`}>
                                     {item.question}
                                 </span>
-                                <div className={`p-3 rounded-2xl transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-110' : 'bg-gray-100 dark:bg-white/5 text-gray-500'
+                                <div className={`p-3 rounded-2xl transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-110' : 'bg-primary/5 dark:bg-white/5 text-primary dark:text-gray-300'
                                     }`}>
                                     {openIndex === index ? <Minus size={18} /> : <Plus size={18} />}
                                 </div>
@@ -71,7 +71,7 @@ const FAQSection = () => {
                                 className={`transition-all duration-500 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100 py-8 px-8 border-t border-gray-100 dark:border-white/5' : 'max-h-0 opacity-0'
                                     }`}
                             >
-                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-medium">
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-serif">
                                     {item.answer}
                                 </p>
                             </div>

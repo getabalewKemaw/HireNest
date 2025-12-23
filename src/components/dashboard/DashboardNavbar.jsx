@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 import useNotificationStore from '../../store/notificationStore';
 
-const DashboardNavbar = ({ onMenuClick }) => {
+const DashboardNavbar = ({ onMenuClick, isSidebarOpen, isDesktopCollapsed }) => {
     const { user, logout } = useAuthStore();
     const { notifications, unreadCount, markAsRead, markAllAsRead, addNotification } = useNotificationStore();
     const [isDark, setIsDark] = useState(false);
@@ -83,7 +83,7 @@ const DashboardNavbar = ({ onMenuClick }) => {
     const roleLabel = user?.userType?.charAt(0) + user?.userType?.slice(1).toLowerCase();
 
     return (
-        <header className="fixed top-0 right-0 left-0 lg:left-72 bg-white/70 dark:bg-[#0B1C2D]/70 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 h-20 z-40 px-6 sm:px-10 transition-all duration-300">
+        <header className={`fixed top-0 right-0 left-0 ${isDesktopCollapsed ? 'lg:left-24' : 'lg:left-72'} bg-white/70 dark:bg-[#0B1C2D]/70 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 h-20 z-40 px-6 sm:px-10 transition-all duration-300 ease-in-out`}>
             <div className="h-full flex items-center justify-between gap-6">
                 {/* Mobile Menu Toggle & Title Context */}
                 <div className="flex items-center gap-4 lg:hidden">
@@ -93,7 +93,10 @@ const DashboardNavbar = ({ onMenuClick }) => {
                     >
                         <Menu size={22} />
                     </button>
-                    <div className="lg:hidden text-lg font-black text-primary dark:text-white italic">H.</div>
+                    <div className="lg:hidden flex items-center gap-2">
+                        <img src="/image.png" alt="EtWorks" className="h-8 w-auto" />
+                        <span className="text-lg font-black text-primary dark:text-white italic">EtWorks</span>
+                    </div>
                 </div>
 
                 {/* Dynamic Search Bar - Upwork Style */}
@@ -155,7 +158,7 @@ const DashboardNavbar = ({ onMenuClick }) => {
                                                 onClick={() => markAsRead(n.id)}
                                                 className={`p-4 rounded-2xl flex gap-4 transition-all cursor-pointer ${n.read ? 'opacity-60 grayscale-[0.5]' : 'bg-gray-50 dark:bg-white/5 border border-transparent hover:border-secondary/20 hover:bg-secondary/5'}`}
                                             >
-                                                <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${n.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' :
+                                                <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${n.type === 'success' ? 'bg-blue-500/10 text-blue-500' :
                                                     n.type === 'error' ? 'bg-rose-500/10 text-rose-500' :
                                                         'bg-blue-500/10 text-blue-500'
                                                     }`}>
@@ -208,7 +211,7 @@ const DashboardNavbar = ({ onMenuClick }) => {
                                     <ChevronDown size={14} className={`text-gray-400 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <div className={`w-1.5 h-1.5 rounded-full ${user?.userType === 'ADMIN' ? 'bg-red-500' : 'bg-emerald-500'}`}></div>
+                                    <div className={`w-1.5 h-1.5 rounded-full ${user?.userType === 'ADMIN' ? 'bg-red-500' : 'bg-blue-500'}`}></div>
                                     <div className="text-[10px] uppercase tracking-[0.15em] font-black text-gray-400">
                                         {roleLabel}
                                     </div>

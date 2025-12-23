@@ -21,14 +21,14 @@ const EmployerDashboard = ({ user }) => {
     const stats = [
         { label: 'Active Jobs', value: '8', icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { label: 'Total Applicants', value: '456', icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-        { label: 'Interviews', value: '14', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+        { label: 'Interviews', value: '14', icon: CheckCircle2, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { label: 'Urgent Tasks', value: '2', icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
     ];
 
     const candidatePipeline = [
         { stage: 'Portfolio Review', count: 120, trend: '+12%', color: 'from-blue-500 to-indigo-500' },
         { stage: 'Tech Assessment', count: 85, trend: '+5%', color: 'from-amber-500 to-orange-500' },
-        { stage: 'Face to Face', count: 32, trend: '-2%', color: 'from-emerald-500 to-teal-500' },
+        { stage: 'Face to Face', count: 32, trend: '-2%', color: 'from-blue-500 to-cyan-500' },
         { stage: 'Offer Stage', count: 8, trend: '+8%', color: 'from-rose-500 to-pink-500' },
     ];
 
@@ -43,11 +43,11 @@ const EmployerDashboard = ({ user }) => {
             {/* Employer Greeting Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-4 border border-emerald-500/20">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-4 border border-blue-500/20">
                         <Zap size={14} /> Hiring High Priority
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-serif font-black text-primary dark:text-white leading-tight">
-                        Good morning, <span className="italic font-medium text-secondary underline decoration-accent underline-offset-[8px]">{user?.name?.split(' ')[0] || 'HireNest Partner'}</span>.
+                        Good morning, <span className="italic font-medium text-secondary underline decoration-accent underline-offset-[8px]">{user?.name?.split(' ')[0] || 'EtWorks Partner'}</span>.
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 font-heading font-light text-lg max-w-lg mt-4">
                         You have 12 new applications for the <span className="text-secondary font-bold">Senior Brand Designer</span> role.
@@ -127,16 +127,16 @@ const EmployerDashboard = ({ user }) => {
                                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Total</span>
                                                 </div>
                                                 {job.new > 0 && (
-                                                    <div className="bg-emerald-500 text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse shadow-lg shadow-emerald-500/20">
+                                                    <div className="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded-lg animate-pulse shadow-lg shadow-blue-500/20">
                                                         +{job.new} NEW
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="px-8 py-8">
-                                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${job.status === 'Active' ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20' : 'bg-gray-100 dark:bg-white/10 text-gray-400 border-transparent'
+                                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${job.status === 'Active' ? 'bg-blue-500/5 text-blue-500 border-blue-500/20' : 'bg-gray-100 dark:bg-white/10 text-gray-400 border-transparent'
                                                 }`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full ${job.status === 'Active' ? 'bg-emerald-500 animate-ping' : 'bg-gray-400'}`}></div>
+                                                <div className={`w-1.5 h-1.5 rounded-full ${job.status === 'Active' ? 'bg-blue-500 animate-ping' : 'bg-gray-400'}`}></div>
                                                 <span className="text-[10px] font-black uppercase tracking-widest">{job.status}</span>
                                             </div>
                                         </td>
@@ -171,7 +171,7 @@ const EmployerDashboard = ({ user }) => {
                                         <span className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">{stage.stage}</span>
                                         <div className="flex items-center gap-3">
                                             <span className="font-black text-xl leading-none">{stage.count}</span>
-                                            <span className={`text-[10px] font-black font-mono leading-none ${stage.trend.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                            <span className={`text-[10px] font-black font-mono leading-none ${stage.trend.startsWith('+') ? 'text-blue-400' : 'text-rose-400'}`}>
                                                 {stage.trend}
                                             </span>
                                         </div>

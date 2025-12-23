@@ -4,7 +4,7 @@ import {
     MapPin, Briefcase, Clock, Calendar,
     DollarSign, Building2, Share2, Bookmark,
     ArrowLeft, CheckCircle2, Send, ShieldCheck,
-    GraduationCap, Users
+    GraduationCap, Users, ArrowRight
 } from 'lucide-react';
 import jobService from '../../services/jobService';
 import savedJobService from '../../services/savedJobService';
@@ -142,20 +142,21 @@ const JobDetailPage = () => {
                     <span className="text-sm font-bold tracking-widest uppercase">Back to listings</span>
                 </button>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 relative items-start">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-10">
+                    <div className="lg:col-span-2 space-y-8">
                         {/* Main Header Card */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-14 border border-gray-100 dark:border-gray-700 shadow-[0_30px_60px_rgba(0,0,0,0.02)] relative overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-10 border border-gray-100 dark:border-gray-700 shadow-[0_20px_60px_rgba(0,0,0,0.02)] relative overflow-hidden group">
                             {/* Decorative background blob */}
-                            <div className="absolute -top-24 -right-24 w-64 h-64 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
+                            <div className="absolute -top-24 -right-24 w-64 h-64 bg-secondary/5 rounded-full blur-3xl pointer-events-none transition-transform group-hover:scale-110 duration-1000" />
+                            <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none -translate-x-10 -translate-y-10" />
 
-                            <div className="flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
+                            <div className="flex flex-col md:flex-row justify-between items-start gap-6 relative z-10 mb-8">
                                 <div
-                                    className="flex gap-6 cursor-pointer group/company"
+                                    className="flex gap-5 cursor-pointer group/company"
                                     onClick={() => setShowCompanyModal(true)}
                                 >
-                                    <div className="w-20 h-20 rounded-3xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center border border-gray-100 dark:border-gray-600 overflow-hidden group-hover/company:shadow-lg transition-all group-hover/company:scale-105">
+                                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gray-50 dark:bg-gray-700 flex items-center justify-center border border-gray-100 dark:border-gray-600 overflow-hidden group-hover/company:shadow-lg transition-all group-hover/company:scale-105 shrink-0">
                                         {job.companyLogoUrl ? (
                                             <img
                                                 src={job.companyLogoUrl}
@@ -163,194 +164,212 @@ const JobDetailPage = () => {
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <span className="text-3xl font-serif font-black text-primary dark:text-gray-300">
+                                            <span className="text-2xl md:text-3xl font-serif font-black text-primary dark:text-gray-300">
                                                 {job.companyName?.charAt(0) || 'J'}
                                             </span>
                                         )}
                                     </div>
                                     <div>
-                                        <h1 className="text-4xl lg:text-5xl font-serif font-black text-primary dark:text-white mb-3 group-hover/company:text-secondary transition-colors">
+                                        <h1 className="text-3xl lg:text-4xl font-serif font-black text-primary dark:text-white mb-2 leading-tight group-hover/company:text-secondary transition-colors">
                                             {job.title}
                                         </h1>
-                                        <div className="flex items-center gap-2 text-sm font-heading font-medium text-secondary">
-                                            <Building2 size={18} />
-                                            <span className="font-bold border-b border-transparent group-hover/company:border-secondary transition-colors">
+                                        <div className="flex flex-wrap items-center gap-2 text-sm font-heading font-medium text-text-secondary dark:text-gray-400">
+                                            <Building2 size={16} className="text-gray-400" />
+                                            <span className="font-bold border-b border-transparent group-hover/company:border-secondary transition-colors text-gray-700 dark:text-gray-300">
                                                 {job.companyName}
                                             </span>
-                                            <span className="mx-2 text-gray-300">•</span>
-                                            <ShieldCheck size={18} className="text-accent" />
-                                            <span className="text-accent text-xs font-black uppercase">Verified Employer</span>
+                                            <span className="text-gray-300">•</span>
+                                            <div className="flex items-center gap-1 text-emerald-500 bg-emerald-50 dark:bg-emerald-900/10 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide">
+                                                <ShieldCheck size={12} />
+                                                Verified
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-4 w-full md:w-auto">
+
+                                <div className="flex gap-3 w-full md:w-auto mt-2 md:mt-0">
                                     <button
                                         onClick={handleToggleSave}
                                         disabled={saving}
-                                        className={`flex-1 md:flex-none p-4 rounded-2xl transition-all ${isSaved ? 'bg-secondary text-white' : 'bg-gray-50 dark:bg-gray-700 text-gray-400 hover:text-primary'}`}
+                                        className={`flex-1 md:flex-none h-12 w-12 flex items-center justify-center rounded-xl transition-all border ${isSaved ? 'bg-secondary text-white border-secondary' : 'bg-white dark:bg-gray-700/50 text-gray-400 border-gray-200 dark:border-gray-600 hover:border-secondary hover:text-secondary'}`}
                                         title={isSaved ? "Remove from saved" : "Save this job"}
                                     >
-                                        <Bookmark size={22} fill={isSaved ? "currentColor" : "none"} />
+                                        <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
                                     </button>
-                                    <button className="flex-1 md:flex-none p-4 rounded-2xl bg-gray-50 dark:bg-gray-700 text-gray-400 hover:text-primary transition-all">
-                                        <Share2 size={22} />
+                                    <button className="flex-1 md:flex-none h-12 w-12 flex items-center justify-center rounded-xl bg-white dark:bg-gray-700/50 text-gray-400 border border-gray-200 dark:border-gray-600 hover:border-primary hover:text-primary transition-all">
+                                        <Share2 size={20} />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 pt-12 border-t border-gray-100 dark:border-gray-700/50">
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Location</span>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 pt-8 border-t border-gray-100 dark:border-gray-700/50">
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                                        Location
+                                    </span>
                                     <div className="flex items-center gap-2 text-primary dark:text-white font-bold text-sm">
-                                        <MapPin size={16} className="text-secondary" />
-                                        {job.addressCity || 'Remote'}
+                                        <MapPin size={16} className="text-secondary shrink-0" />
+                                        <span className="truncate">{job.addressCity || 'Remote'}</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Type</span>
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                                        Type
+                                    </span>
                                     <div className="flex items-center gap-2 text-primary dark:text-white font-bold text-sm">
-                                        <Briefcase size={16} className="text-secondary" />
-                                        {job.jobType.replace('_', ' ')}
+                                        <Briefcase size={16} className="text-accent shrink-0" />
+                                        <span className="truncate">{job.jobType.replace('_', ' ')}</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Salary</span>
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                                        Salary
+                                    </span>
                                     <div className="flex items-center gap-2 text-primary dark:text-white font-bold text-sm">
-                                        <DollarSign size={16} className="text-secondary" />
-                                        {job.salaryMin ? (
-                                            <>
-                                                {job.currency || '$'} {job.salaryMin.toLocaleString()}
-                                                {job.salaryMax && ` - ${job.salaryMax.toLocaleString()}`}
-                                                <span className="text-[10px] text-gray-400 font-medium ml-1">/{job.compensationType?.toLowerCase()}</span>
-                                            </>
-                                        ) : 'Negotiable'}
+                                        <DollarSign size={16} className="text-secondary shrink-0" />
+                                        <span className="truncate">
+                                            {job.salaryMin ? `${job.currency || '$'}${job.salaryMin.toLocaleString()}` : 'Negotiable'}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Closing</span>
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                                        Posted
+                                    </span>
                                     <div className="flex items-center gap-2 text-primary dark:text-white font-bold text-sm">
-                                        <Calendar size={16} className="text-secondary" />
-                                        {job.deadline ? new Date(job.deadline).toLocaleDateString() : 'N/A'}
+                                        <Clock size={16} className="text-gray-400 shrink-0" />
+                                        <span>{new Date(job.createdAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Description Section */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-14 border border-gray-100 dark:border-gray-700 shadow-sm">
-                            <h2 className="text-2xl font-serif font-black text-primary dark:text-white mb-8 border-b border-gray-100 dark:border-gray-700 pb-6">
-                                About the Position
+                        <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-10 border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                            <h2 className="text-2xl font-serif font-black text-primary dark:text-white mb-6 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                    <Briefcase size={18} />
+                                </div>
+                                About the Role
                             </h2>
-                            <div className="prose prose-lg prose-slate dark:prose-invert max-w-none font-heading text-text-secondary dark:text-gray-400 space-y-6">
+                            <div className="prose prose-lg prose-slate dark:prose-invert max-w-none font-heading text-text-secondary dark:text-gray-400 leading-relaxed text-base md:text-lg">
                                 {job.description?.split('\n').map((para, i) => (
-                                    <p key={i}>{para}</p>
+                                    <p key={i} className="mb-4 last:mb-0">{para}</p>
                                 ))}
                             </div>
 
-                            <h3 className="text-xl font-serif font-black text-primary dark:text-white mt-12 mb-6">
-                                Key Requirements
+                            <div className="my-8 h-px w-full bg-gray-100 dark:bg-gray-700" />
+
+                            <h3 className="text-xl font-serif font-black text-primary dark:text-white mb-6 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center text-accent">
+                                    <CheckCircle2 size={18} />
+                                </div>
+                                Requirements
                             </h3>
-                            <ul className="space-y-4 font-heading text-text-secondary dark:text-gray-400">
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle2 size={24} className="text-accent mt-0.5 flex-shrink-0" />
-                                    <span>{job.experienceLevel} Experience Level: {job.experienceDescription}</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle2 size={24} className="text-accent mt-0.5 flex-shrink-0" />
-                                    <span>Education: {formatEducation(job.educationLevel)}</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle2 size={24} className="text-accent mt-0.5 flex-shrink-0" />
-                                    <span>Gender Preference: {job.genderRequirement || 'Any'}</span>
-                                </li>
+                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700">
+                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Education</div>
+                                    <div className="font-bold text-primary dark:text-white flex items-center gap-2">
+                                        <GraduationCap size={16} className="text-purple-500" />
+                                        {formatEducation(job.educationLevel)}
+                                    </div>
+                                </div>
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border border-gray-100 dark:border-gray-700">
+                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Experience</div>
+                                    <div className="font-bold text-primary dark:text-white flex items-center gap-2">
+                                        <Briefcase size={16} className="text-orange-500" />
+                                        {job.experienceLevel}
+                                    </div>
+                                </div>
                             </ul>
+
+                            <div className="mt-4 p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 text-base text-blue-800 dark:text-blue-200 leading-relaxed">
+                                <span className="font-bold block mb-1">Note from Employer:</span>
+                                {job.experienceDescription || "We are looking for a candidate who is passionate and ready to make an impact."}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Sidebar Area */}
-                    <div className="space-y-8">
+                    {/* Sticky Sidebar Area */}
+                    <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-28">
                         {/* Quick Apply Card */}
-                        <div className="bg-primary hover:bg-primary-dark rounded-[2.5rem] p-10 text-white shadow-2xl transition-all duration-300 group">
-                            <h3 className="text-2xl font-serif font-black mb-4">Ready to apply?</h3>
-                            <p className="text-blue-100/70 font-light mb-8 font-heading leading-relaxed">
-                                Take the first step towards your dream role. It only takes 2 minutes.
+                        <div className="bg-primary overflow-hidden rounded-[2rem] p-8 text-white shadow-2xl transition-all duration-300 relative group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-xl" />
+                            <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/20 rounded-full -ml-12 -mb-12 blur-xl" />
+
+                            <h3 className="text-2xl font-serif font-black mb-3 relative z-10">Interested?</h3>
+                            <p className="text-blue-100/70 font-medium text-sm mb-8 font-heading leading-relaxed relative z-10">
+                                Don't miss out on this opportunity. Applications are closing soon.
                             </p>
 
-                            {user?.userType === 'SEEKER' ? (
-                                hasApplied ? (
-                                    <div className="w-full p-6 rounded-2xl bg-white/10 text-white text-center flex flex-col items-center gap-3">
-                                        <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                                            <ShieldCheck size={24} />
+                            <div className="relative z-10">
+                                {user?.userType === 'SEEKER' ? (
+                                    hasApplied ? (
+                                        <div className="w-full p-6 rounded-2xl bg-white/10 text-white text-center flex flex-col items-center gap-3 backdrop-blur-sm">
+                                            <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+                                                <ShieldCheck size={20} />
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <div className="font-serif font-bold text-lg">Applied</div>
+                                                <p className="text-blue-100/60 text-[10px] font-bold uppercase tracking-wider">Application Sent</p>
+                                            </div>
+                                            <Link to="/applications" className="mt-2 w-full">
+                                                <Button variant="outline" fullWidth size="sm" className="border-white/20 text-white hover:bg-white hover:text-primary h-10 text-xs">
+                                                    View Status
+                                                </Button>
+                                            </Link>
                                         </div>
-                                        <div className="space-y-1">
-                                            <div className="font-serif font-black text-xl italic uppercase tracking-wider">Already Applied</div>
-                                            <p className="text-blue-100/50 text-[10px] font-bold uppercase tracking-[0.2em]">Application is being reviewed</p>
-                                        </div>
-                                        <Link to="/applications" className="mt-2 w-full">
-                                            <Button variant="outline" fullWidth size="md" className="border-white/30 text-white hover:bg-white hover:text-primary">
-                                                Track Status
-                                            </Button>
-                                        </Link>
-                                    </div>
+                                    ) : (
+                                        <Button
+                                            variant="secondary"
+                                            fullWidth
+                                            size="lg"
+                                            onClick={openApplyModal}
+                                            className="shadow-xl shadow-secondary/20 h-14 text-base"
+                                        >
+                                            Apply Now
+                                            <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </Button>
+                                    )
+                                ) : !user ? (
+                                    <Link to="/auth/login" className="block">
+                                        <Button variant="secondary" fullWidth size="lg" className="h-14">
+                                            Sign in to Apply
+                                        </Button>
+                                    </Link>
                                 ) : (
-                                    <Button
-                                        variant="secondary"
-                                        fullWidth
-                                        size="lg"
-                                        onClick={openApplyModal}
-                                        className="shadow-xl shadow-secondary/20"
-                                    >
-                                        Apply Now
-                                        <Send size={18} className="ml-2" />
-                                    </Button>
-                                )
-                            ) : !user ? (
-                                <Link to="/auth/login" className="block">
-                                    <Button variant="secondary" fullWidth size="lg">
-                                        Sign in to Apply
-                                    </Button>
-                                </Link>
-                            ) : (
-                                <div className="p-4 rounded-2xl bg-white/10 text-white/60 text-center text-sm font-bold uppercase tracking-widest">
-                                    Restricted to Seekers
-                                </div>
-                            )}
+                                    <div className="p-4 rounded-2xl bg-white/10 text-white/60 text-center text-xs font-bold uppercase tracking-widest backdrop-blur-sm border border-white/10">
+                                        Seeker Access Only
+                                    </div>
+                                )}
+                            </div>
 
-                            <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-between text-xs text-blue-100/50 font-bold uppercase tracking-widest">
-                                <span>{job.vacancyCount || 1} open positions</span>
-                                <span>{job.applicantCount || 0} applied</span>
+                            <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between text-[10px] text-blue-100/50 font-black uppercase tracking-widest relative z-10">
+                                <span>{job.vacancyCount || 1} Positions</span>
+                                <span>{job.applicantCount || 0} Applicants</span>
                             </div>
                         </div>
 
                         {/* Quick Stats Sidebar */}
-                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] p-8 border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
-                            <h4 className="text-sm font-black text-primary dark:text-white uppercase tracking-widest">Overview</h4>
-                            <div className="space-y-5">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center">
-                                        <Building2 size={20} />
+                        <div className="bg-white dark:bg-gray-800 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-700 shadow-sm space-y-5">
+                            <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Job Overview</h4>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center shrink-0">
+                                        <Building2 size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Industry</div>
+                                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Department</div>
                                         <div className="text-sm font-bold text-primary dark:text-white">{job.category}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center">
-                                        <GraduationCap size={20} />
+                                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center shrink-0">
+                                        <Briefcase size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Education</div>
-                                        <div className="text-sm font-bold text-primary dark:text-white">{formatEducation(job.educationLevel)}</div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600 flex items-center justify-center">
-                                        <Users size={20} />
-                                    </div>
-                                    <div>
-                                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Experience</div>
-                                        <div className="text-sm font-bold text-primary dark:text-white">{job.experienceLevel}</div>
+                                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Workplace</div>
+                                        <div className="text-sm font-bold text-primary dark:text-white">{job.workplaceType?.replace('_', ' ')}</div>
                                     </div>
                                 </div>
                             </div>

@@ -18,7 +18,7 @@ const SeekerDashboard = ({ user, profile }) => {
     const stats = [
         { label: 'Active Applications', value: '12', icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { label: 'Upcoming Interviews', value: '3', icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Saved Opportunities', value: '24', icon: Bookmark, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+        { label: 'Saved Opportunities', value: '24', icon: Bookmark, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { label: 'Profile Visibility', value: 'High', icon: TrendingUp, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
     ];
 
@@ -80,14 +80,14 @@ const SeekerDashboard = ({ user, profile }) => {
                     <div className="hidden lg:block">
                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 w-64 shadow-2xl">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shadow-lg shadow-secondary/20">
                                     <Award size={20} className="text-white" />
                                 </div>
                                 <div className="text-sm font-black">Top Talent</div>
                             </div>
                             <div className="space-y-4">
                                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 w-[85%] rounded-full shadow-sm"></div>
+                                    <div className="h-full bg-secondary w-[85%] rounded-full shadow-sm"></div>
                                 </div>
                                 <div className="flex justify-between text-[10px] font-bold text-white/60 uppercase tracking-widest">
                                     <span>Profile Completion</span>
@@ -107,7 +107,7 @@ const SeekerDashboard = ({ user, profile }) => {
                             <div className={`${stat.bg} ${stat.color} p-4 rounded-2xl group-hover:scale-110 transition-transform`}>
                                 <stat.icon size={22} />
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg">
+                            <div className="flex items-center gap-1 text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-1 rounded-lg">
                                 <TrendingUp size={12} /> +8.4%
                             </div>
                         </div>
@@ -159,7 +159,7 @@ const SeekerDashboard = ({ user, profile }) => {
                                             <span>•</span>
                                             <span>{job.location}</span>
                                             <span>•</span>
-                                            <span>Est. Budget: <span className="text-emerald-500 font-bold">{job.salary}</span></span>
+                                            <span>Est. Budget: <span className="text-secondary font-bold">{job.salary}</span></span>
                                         </div>
 
                                         <div className="flex flex-wrap gap-2 mb-6">

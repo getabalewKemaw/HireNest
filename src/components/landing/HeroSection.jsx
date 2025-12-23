@@ -21,28 +21,23 @@ const HeroSection = () => {
 
                 {/* Elite Blobs for atmosphere */}
                 <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-secondary/5 dark:bg-secondary/10 rounded-full blur-[120px] animate-blob pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-accent/5 dark:bg-accent/10 rounded-full blur-[100px] animate-blob animation-delay-2000 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-secondary/5 dark:bg-secondary/10 rounded-full blur-[100px] animate-blob animation-delay-2000 pointer-events-none"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
                 <div className="max-w-4xl">
                     {/* Content Section */}
-                    <div className="space-y-10 animate-fade-in">
+                    <div className="space-y-10 animate-fade-in mt-12 md:mt-20">
                         <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-secondary/10 dark:bg-white/5 border border-secondary/10 dark:border-white/5 text-secondary dark:text-secondary-light font-accent font-black text-[10px] uppercase tracking-[0.2em] shadow-sm">
                             <Zap size={14} className="animate-pulse" /> The Next-Gen Career Ecosystem
                         </div>
 
-                        <h1 className="text-6xl md:text-[5.5rem] font-serif font-black text-primary dark:text-white leading-[0.9] tracking-tighter">
-                            Hire the <span className="text-secondary italic">Future.</span> <br />
-                            Be the <span className="relative">
-                                Future.
-                                <svg className="absolute -bottom-2 left-0 w-full h-4 text-accent/30" viewBox="0 0 100 10" preserveAspectRatio="none">
-                                    <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
-                                </svg>
-                            </span>
+                        <h1 className="text-6xl md:text-[5.5rem] font-serif font-black text-primary dark:text-white leading-[1.1] tracking-tighter min-h-[160px] md:min-h-[220px]">
+                            <div>Hire the <span className="text-secondary italic">Future.</span></div>
+                            <div className="mt-2">Be the <span className="text-secondary">Future.</span></div>
                         </h1>
 
-                        <p className="text-xl md:text-2xl text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-2xl">
+                        <p className="text-xl md:text-2xl text-gray-500 dark:text-gray-400 font-serif leading-relaxed max-w-2xl">
                             The world's most advanced job platform connecting elite talent with industry pioneers.
                             Built for speed, transparency, and results.
                         </p>
@@ -79,7 +74,7 @@ const HeroSection = () => {
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex items-center gap-1 mb-1">
-                                    {[1, 2, 3, 4, 5].map(star => <Star key={star} size={14} fill="#F59E0B" className="text-amber-500" />)}
+                                    {[1, 2, 3, 4, 5].map(star => <Star key={star} size={14} fill="currentColor" className="text-secondary" />)}
                                 </div>
                                 <p className="text-sm font-bold text-gray-400">4.9/5 from verified professionals</p>
                             </div>

@@ -86,7 +86,8 @@ function AppContent() {
       '/contracts',
       '/reports',
       '/billing',
-      '/settings'
+      '/settings',
+      '/seeker/'
     ];
 
     // Special handling: 

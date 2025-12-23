@@ -30,8 +30,8 @@ const stats = [
         value: '94%',
         icon: TrendingUp,
         detail: 'Best in the industry',
-        color: 'text-amber-500',
-        bg: 'bg-amber-500/10'
+        color: "text-secondary",
+        bg: "bg-secondary/10"
     },
 ];
 

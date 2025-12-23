@@ -101,10 +101,10 @@ const Navbar = () => {
             <img
               src="/image.png"
               alt="HireNest Logo"
-              className="h-10 w-auto transition-transform duration-500 group-hover:rotate-6 shadow-sm"
+              className="h-10 w-auto transition-transform duration-500 group-hover:rotate-6 shadow-sm  rounded-full"
             />
-            <span className="text-2xl font-accent font-black text-primary dark:text-white tracking-tighter italic">
-              HireNest
+            <span className="text-2xl font-accent font-black text-primary dark:text-white tracking-tighter ">
+              EtWorks
             </span>
           </Link>
 
