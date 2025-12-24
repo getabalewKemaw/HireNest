@@ -43,6 +43,7 @@ import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
 
 import useAuthStore from './store/authStore';
 import { ROUTES } from './config/constants';
+import EmaChatWidget from './components/landing/EmaChatWidget';
 
 /**
  * Main App Component
@@ -177,6 +178,9 @@ function AppContent() {
       </main>
 
       {shouldShowLayout && <Footer />}
+
+      {/* Global Ema AI Assistant */}
+      <EmaChatWidget />
     </div>
   );
 }

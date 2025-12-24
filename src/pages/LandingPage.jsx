@@ -1,11 +1,12 @@
 import HeroSection from '../components/landing/HeroSection';
-
 import FeaturesSection from '../components/landing/FeaturesSection';
 import AboutSection from '../components/landing/AboutSection';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
 import FeaturedJobsSection from '../components/landing/FeaturedJobsSection';
+import DeveloperSection from '../components/landing/DeveloperSection';
 import FAQSection from '../components/landing/FAQSection';
 import CTASection from '../components/landing/CTASection';
+import BottomCTASection from '../components/landing/BottomCTASection';
 
 /**
  * Landing Page Component
@@ -29,8 +30,6 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent"></div>
         </div>
-
-
 
         <div className="bg-gray-50/50 dark:bg-black/10 transition-colors duration-500">
           <FeaturesSection />
@@ -56,8 +55,19 @@ const LandingPage = () => {
         </div>
 
         <FeaturedJobsSection />
-        <FAQSection />
+
+        {/* Developer Section */}
+
+
+
+
+        {/* Original CTA Section */}
         <CTASection />
+        <DeveloperSection />
+
+        {/* New Premium Bottom CTA */}
+        <BottomCTASection />
+        <FAQSection />
       </div>
     </div>
   );

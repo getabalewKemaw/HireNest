@@ -26,10 +26,10 @@ const AboutSection = () => {
                             We're more than just a <br /><span className="text-secondary italic">job board.</span>
                         </h3>
                         <p className="text-lg text-gray-500 dark:text-gray-400 mb-6 leading-relaxed font-serif">
-                            HireNest was built on the belief that finding a job should be an exciting journey, not a stressful chore. We leverage AI and human-centric design to connect talent with opportunity in real-time.
+                            Etworks was built on the belief that finding a job in Ethiopia should be an exciting journey. We leverage AI-powered solutions to streamline recruitment and talent acquisition, helping companies find the right fit more effectively.
                         </p>
                         <p className="text-lg text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-serif">
-                            Our mission is to democratize hiring by providing powerful tools to both seekers and employers, ensuring the perfect fit every time.
+                            Our primary goal is to enhance the entire hiring process for businesses and seekers alike, providing data-driven insights and a smoother experience across the nation.
                         </p>
 
                         <div className="grid grid-cols-2 gap-8">

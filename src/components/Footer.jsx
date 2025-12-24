@@ -16,8 +16,8 @@ const Footer = () => {
           <div className="lg:col-span-4">
             <Link to={ROUTES.HOME} className="flex items-center space-x-3 mb-8 group w-fit">
               <div className="relative">
-                <div className="absolute inset-0 bg-secondary   group-hover:opacity-60 transition-opacity" />
-                <img src="/image.png" alt="HireNest" className="h-10 w-auto invert brightness-0 relative z-10" />
+                <div className="absolute inset-0   group-hover:opacity-60 transition-opacity" />
+                <img src="/image.png" alt="Etworks" className="h-10 w-auto invert  relative z-10  rounded-full" />
               </div>
               <span className="text-3xl font-heading font-black tracking-tight text-white group-hover:text-secondary transition-colors">EtWorks</span>
             </Link>
@@ -88,7 +88,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-gray-500 text-sm font-serif">
-            &copy; {currentYear} HireNest Inc. All rights reserved.
+            &copy; {currentYear} Etworks Inc. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-sm text-gray-500 font-serif">
             <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />

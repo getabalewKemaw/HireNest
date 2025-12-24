@@ -7,8 +7,8 @@ const faqData = [
         answer: "Simply create an account, complete your profile, and use our advanced search filters to find roles that match your skills and preferences. We'll also send you personalized recommendations."
     },
     {
-        question: "Is HireNest free for job seekers?",
-        answer: "Yes, searching for jobs and applying on HireNest is completely free for all seekers. We also offer premium features for those who want extra visibility."
+        question: "Is Etworks free for job seekers?",
+        answer: "Yes, searching for jobs and applying on Etworks is completely free for all seekers. We also offer premium features for those who want extra visibility."
     },
     {
         question: "How can I post a job as an employer?",
@@ -20,7 +20,7 @@ const faqData = [
     },
     {
         question: "How do I contact support?",
-        answer: "You can reach out to our dedicated support team 24/7 through the 'Help' section in your dashboard or by emailing support@hirenest.com."
+        answer: "You can reach out to our dedicated support team 24/7 through the 'Help' section in your dashboard or by emailing getabalewkemaw@gmail.com."
     }
 ];
 
@@ -40,7 +40,7 @@ const FAQSection = () => {
                         Got <span className="text-secondary italic">Questions?</span>
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto font-serif">
-                        Everything you need to know about HireNest and how we help you find your next big opportunity.
+                        Everything you need to know about Etworks and how we help you find your next big opportunity.
                     </p>
                 </div>
 

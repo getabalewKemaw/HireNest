@@ -100,7 +100,7 @@ const Navbar = () => {
           <Link to={ROUTES.HOME} className="flex items-center space-x-3 group relative z-10 transition-transform hover:scale-[1.02]">
             <img
               src="/image.png"
-              alt="HireNest Logo"
+              alt="Etworks Logo"
               className="h-10 w-auto transition-transform duration-500 group-hover:rotate-6 shadow-sm  rounded-full"
             />
             <span className="text-2xl font-accent font-black text-primary dark:text-white tracking-tighter ">
@@ -147,7 +147,7 @@ const Navbar = () => {
                   >
                     <Link to="/talent" className={dropdownItemClass}><Users size={18} /> Discover Talent</Link>
                     <Link to="/post-job" className={dropdownItemClass}><Briefcase size={18} /> Post a Job</Link>
-                    <Link to="/enterprise" className={dropdownItemClass}><ShieldCheck size={18} /> HireNest Enterprise</Link>
+                    <Link to="/enterprise" className={dropdownItemClass}><ShieldCheck size={18} /> Etworks Enterprise</Link>
                   </div>
                 )}
               </div>
