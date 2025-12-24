@@ -39,19 +39,14 @@ const EmployerDashboard = ({ user }) => {
     };
 
     const activeJobsCount = jobs.filter(j => j.isActive).length;
+    const totalApplicants = jobs.reduce((sum, job) => sum + (job.applicantCount || 0), 0);
+    const pausedJobs = jobs.filter(j => !j.isActive).length;
 
     const stats = [
-        { label: 'Active Jobs', value: activeJobsCount.toString(), icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-        { label: 'Total Applicants', value: '0', icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-        { label: 'Interviews', value: '0', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-        { label: 'Urgent Tasks', value: '1', icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-    ];
-
-    const candidatePipeline = [
-        { stage: 'Portfolio Review', count: 0, trend: '0%', color: 'from-blue-500 to-indigo-500' },
-        { stage: 'Tech Assessment', count: 0, trend: '0%', color: 'from-amber-500 to-orange-500' },
-        { stage: 'Face to Face', count: 0, trend: '0%', color: 'from-emerald-500 to-teal-500' },
-        { stage: 'Offer Stage', count: 0, trend: '0%', color: 'from-rose-500 to-pink-500' },
+        { label: 'Active Jobs', value: activeJobsCount.toString(), icon: FileText, color: 'text-secondary', bg: 'bg-secondary/10' },
+        { label: 'Total Applicants', value: totalApplicants.toString(), icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
+        { label: 'Total Jobs', value: jobs.length.toString(), icon: CheckCircle2, color: 'text-secondary', bg: 'bg-secondary/10' },
+        { label: 'Paused Jobs', value: pausedJobs.toString(), icon: AlertCircle, color: 'text-amber-500', bg: 'bg-amber-500/10' },
     ];
 
     return (
@@ -59,14 +54,14 @@ const EmployerDashboard = ({ user }) => {
             {/* Employer Greeting Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-4 border border-emerald-500/20">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest mb-4 border border-secondary/20">
                         <Zap size={14} /> Hiring High Priority
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-serif font-black text-primary dark:text-white leading-tight">
-                        Good morning, <span className="italic font-medium text-secondary underline decoration-accent underline-offset-[8px]">{user?.name?.split(' ')[0] || 'HireNest Partner'}</span>.
+                        Good morning, <span className="italic font-medium text-secondary underline decoration-accent underline-offset-[8px]">{user?.name?.split(' ')[0] || 'EtWorks Partner'}</span>.
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 font-heading font-light text-lg max-w-lg mt-4">
-                        You have 12 new applications for the <span className="text-secondary font-bold">Senior Brand Designer</span> role.
+                        {totalApplicants > 0 ? `Managing ${activeJobsCount} active job${activeJobsCount !== 1 ? 's' : ''} with ${totalApplicants} total applicants.` : 'Start posting jobs to attract top talent.'}
                     </p>
                 </div>
                 <div className="flex gap-4">
@@ -124,43 +119,61 @@ const EmployerDashboard = ({ user }) => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50 dark:divide-white/5">
-                                {jobs.length > 0 ? (
-                                    jobs.map((job, idx) => (
-                                        <tr key={job.id || idx} className="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer">
-                                            <td className="px-8 py-8">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">{job.category || 'General'}</span>
-                                                    <span className="font-bold text-lg text-primary dark:text-white group-hover:text-secondary transition-colors italic">{job.title}</span>
-                                                    <div className="flex items-center gap-2 mt-2">
-                                                        <Clock size={12} className="text-gray-300" />
-                                                        <span className="text-xs text-gray-400 font-medium whitespace-nowrap">Posted {new Date(job.createdAt).toLocaleDateString()}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-8">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-2xl font-black text-primary dark:text-white leading-none">0</span>
-                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Total</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-8">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${job.isActive ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/20' : 'bg-gray-100 dark:bg-white/10 text-gray-400 border-transparent'
-                                                    }`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${job.isActive ? 'bg-emerald-500 animate-ping' : 'bg-gray-400'}`}></div>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest">{job.isActive ? 'Active' : 'Deactivated'}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-8 text-right text-gray-300 group-hover:text-primary dark:group-hover:text-white transition-colors">
-                                                <MoreVertical size={20} className="ml-auto" />
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
+                                {loading ? (
                                     <tr>
-                                        <td colSpan="4" className="px-8 py-20 text-center text-gray-400 font-bold uppercase tracking-widest">
-                                            No jobs posted yet
+                                        <td colSpan="4" className="px-8 py-20 text-center">
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="animate-spin rounded-full h-12 w-12 border-4 border-secondary border-t-transparent"></div>
+                                                <p className="text-sm text-gray-400 font-medium">Loading jobs...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : jobs.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="4" className="px-8 py-20 text-center">
+                                            <div className="flex flex-col items-center gap-4">
+                                                <FileText size={48} className="text-gray-300" />
+                                                <h3 className="text-lg font-bold text-primary dark:text-white">No jobs posted yet</h3>
+                                                <p className="text-sm text-gray-400">Start by posting your first job to attract talent.</p>
+                                                <Link to="/post-job" className="mt-4 px-6 py-3 bg-secondary text-white font-bold rounded-xl hover:bg-secondary-dark transition-all">
+                                                    Post Your First Job
+                                                </Link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : jobs.slice(0, 5).map((job) => (
+                                    <tr key={job.id} className="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer">
+                                        <td className="px-8 py-8">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-secondary uppercase tracking-widest mb-1.5">{job.category || 'General'}</span>
+                                                <span className="font-bold text-lg text-primary dark:text-white group-hover:text-secondary transition-colors italic">{job.title}</span>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <Clock size={12} className="text-gray-300" />
+                                                    <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
+                                                        Posted {new Date(job.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex flex-col">
+                                                    <span className="text-2xl font-black text-primary dark:text-white leading-none">{job.applicantCount || 0}</span>
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Total</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-8">
+                                            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${job.isActive ? 'bg-secondary/5 text-secondary border-secondary/20' : 'bg-gray-100 dark:bg-white/10 text-gray-400 border-transparent'
+                                                }`}>
+                                                <div className={`w-1.5 h-1.5 rounded-full ${job.isActive ? 'bg-secondary animate-ping' : 'bg-gray-400'}`}></div>
+                                                <span className="text-[10px] font-black uppercase tracking-widest">{job.isActive ? 'Active' : 'Paused'}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-8 text-right text-gray-300 group-hover:text-primary dark:group-hover:text-white transition-colors">
+                                            <Link to={`/jobs/manage`}>
+                                                <MoreVertical size={20} className="ml-auto" />
+                                            </Link>
                                         </td>
                                     </tr>
                                 )}
@@ -180,34 +193,51 @@ const EmployerDashboard = ({ user }) => {
                         </div>
 
                         <h3 className="text-xl font-black mb-10 flex items-center justify-between relative z-10 italic">
-                            Hiring Funnel <Users2 size={24} className="text-secondary" />
+                            Quick Stats <Users2 size={24} className="text-secondary" />
                         </h3>
 
                         <div className="space-y-8 relative z-10">
-                            {candidatePipeline.map((stage, idx) => (
-                                <div key={idx} className="group/stage">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">{stage.stage}</span>
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-black text-xl leading-none">{stage.count}</span>
-                                            <span className={`text-[10px] font-black font-mono leading-none ${stage.trend.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                                {stage.trend}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full bg-gradient-to-r ${stage.color} rounded-full transition-all duration-[2s] group-hover/stage:opacity-80`}
-                                            style={{ width: `${(stage.count / 120) * 100}%` }}
-                                        ></div>
-                                    </div>
+                            <div className="group/stage">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">Active Postings</span>
+                                    <span className="font-black text-xl leading-none">{activeJobsCount}</span>
                                 </div>
-                            ))}
+                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-secondary to-primary rounded-full transition-all duration-[2s] group-hover/stage:opacity-80"
+                                        style={{ width: `${jobs.length > 0 ? (activeJobsCount / jobs.length) * 100 : 0}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div className="group/stage">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">Total Applicants</span>
+                                    <span className="font-black text-xl leading-none">{totalApplicants}</span>
+                                </div>
+                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-secondary to-primary rounded-full transition-all duration-[2s] group-hover/stage:opacity-80"
+                                        style={{ width: `${Math.min(100, totalApplicants)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div className="group/stage">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">Paused Jobs</span>
+                                    <span className="font-black text-xl leading-none">{pausedJobs}</span>
+                                </div>
+                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-[2s] group-hover/stage:opacity-80"
+                                        style={{ width: `${jobs.length > 0 ? (pausedJobs / jobs.length) * 100 : 0}%` }}
+                                    ></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <button className="w-full mt-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-                            Deep Insights <ArrowUpRight size={14} />
-                        </button>
+                        <Link to="/jobs/manage" className="w-full mt-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                            Manage All Jobs <ArrowUpRight size={14} />
+                        </Link>
                     </div>
 
                     {/* Quick Announcement / Tip */}

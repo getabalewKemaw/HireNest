@@ -13,16 +13,16 @@ const features = [
         title: "Zero-Friction Applications",
         description: "Apply to world-class opportunities in milliseconds. We've eliminated the form-filling exhaustion so you can focus on the interview.",
         icon: Zap,
-        color: "text-amber-500",
-        bg: "bg-amber-500/10",
+        color: "text-secondary",
+        bg: "bg-secondary/10",
         tag: "Efficiency"
     },
     {
         title: "Verified Enterprise Network",
         description: "Direct access to vetted hiring managers at Fortune 500s and elite startups. No ghosting, no fake listings, total transparency.",
         icon: ShieldCheck,
-        color: "text-accent",
-        bg: "bg-accent/10",
+        color: "text-secondary",
+        bg: "bg-secondary/10",
         tag: "Security"
     }
 ];
@@ -31,16 +31,14 @@ const FeaturesSection = () => {
     return (
         <section className="py-32 bg-white dark:bg-[#0B1C2D] relative z-10 transition-colors duration-500">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 gap-8">
-                    <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 text-secondary font-accent font-black text-[10px] uppercase tracking-[0.25em] mb-6">
-                            <Target size={14} /> The HireNest Difference
-                        </div>
-                        <h2 className="text-5xl md:text-7xl font-serif font-black text-primary dark:text-white leading-[0.95] tracking-tight">
-                            Engineered for <br /> <span className="text-secondary italic">Exceptional</span> Careers.
-                        </h2>
+                <div className="flex flex-col items-center justify-center text-center mb-24 gap-6">
+                    <div className="inline-flex items-center gap-2 text-secondary font-accent font-black text-[10px] uppercase tracking-[0.2em]">
+                        <Target size={14} /> The HireNest Difference
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 text-lg font-medium max-w-sm pb-2">
+                    <h2 className="text-5xl md:text-7xl font-serif font-black text-primary dark:text-white leading-[0.95] tracking-tight">
+                        Engineered for <span className="text-secondary italic">Exceptional</span> Careers.
+                    </h2>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg font-serif font-medium max-w-2xl leading-relaxed">
                         We're not just a job board. We're a career accelerator designed for the top 5% of global talent.
                     </p>
                 </div>
@@ -67,7 +65,7 @@ const FeaturesSection = () => {
                             <h4 className="text-3xl font-serif font-black text-primary dark:text-white mb-6 group-hover:text-secondary transition-colors italic leading-tight">
                                 {feature.title}
                             </h4>
-                            <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-medium mb-10 flex-grow">
+                            <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-lg font-serif mb-10 flex-grow">
                                 {feature.description}
                             </p>
 
@@ -79,7 +77,7 @@ const FeaturesSection = () => {
                 </div>
 
                 {/* Bottom Trust CTA */}
-                <div className="mt-20 p-10 rounded-[3rem] bg-[#0B1C2D] dark:bg-white/5 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5 shadow-2xl overflow-hidden relative group">
+                <div className="mt-20 p-10 rounded-[3rem] bg-secondary dark:bg-secondary/20 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5 shadow-2xl overflow-hidden relative group">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
 
                     <div className="flex items-center gap-6 relative z-10">

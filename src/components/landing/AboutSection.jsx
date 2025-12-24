@@ -15,8 +15,8 @@ const AboutSection = () => {
                             />
                         </div>
                         <div className="absolute -bottom-6 -left-6 bg-white dark:bg-[#0F2439] p-8 rounded-xl shadow-xl max-w-xs border border-gray-100 dark:border-white/5">
-                            <p className="text-4xl font-accent font-black text-primary dark:text-white mb-2">10k+</p>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">Successful matches made this year alone.</p>
+                            <p className="text-4xl font-serif font-black text-primary dark:text-white mb-2 italic">10k+</p>
+                            <p className="text-xs font-serif text-gray-400 uppercase tracking-widest leading-relaxed">Successful matches made this year alone.</p>
                         </div>
                     </div>
 
@@ -25,21 +25,21 @@ const AboutSection = () => {
                         <h3 className="text-4xl md:text-5xl font-serif font-black text-primary dark:text-white mb-6 leading-tight">
                             We're more than just a <br /><span className="text-secondary italic">job board.</span>
                         </h3>
-                        <p className="text-lg text-gray-500 dark:text-gray-400 mb-6 leading-relaxed font-medium">
+                        <p className="text-lg text-gray-500 dark:text-gray-400 mb-6 leading-relaxed font-serif">
                             HireNest was built on the belief that finding a job should be an exciting journey, not a stressful chore. We leverage AI and human-centric design to connect talent with opportunity in real-time.
                         </p>
-                        <p className="text-lg text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-medium">
+                        <p className="text-lg text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-serif">
                             Our mission is to democratize hiring by providing powerful tools to both seekers and employers, ensuring the perfect fit every time.
                         </p>
 
                         <div className="grid grid-cols-2 gap-8">
                             <div className="group">
                                 <h4 className="text-xl font-serif font-black text-primary dark:text-white mb-2 group-hover:text-secondary transition-colors italic">Global Reach</h4>
-                                <p className="text-sm font-medium text-gray-400">Connecting talent across 50+ countries.</p>
+                                <p className="text-sm font-serif text-gray-400">Connecting talent across 50+ countries.</p>
                             </div>
                             <div className="group">
                                 <h4 className="text-xl font-serif font-black text-primary dark:text-white mb-2 group-hover:text-secondary transition-colors italic">Smart Matching</h4>
-                                <p className="text-sm font-medium text-gray-400">AI-driven algorithms for better relevance.</p>
+                                <p className="text-sm font-serif text-gray-400">AI-driven algorithms for better relevance.</p>
                             </div>
                         </div>
                     </div>

@@ -79,43 +79,78 @@ const JobBoardPage = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10">
-                {/* Sidebar Filters - Desktop */}
+            {/* Desktop & Mobile Layout */}
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 lg:gap-12 relative">
+
+                {/* Mobile Filter Overlay Background */}
+                {showFilters && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+                        onClick={() => setShowFilters(false)}
+                    />
+                )}
+
+                {/* Sidebar Filters */}
                 <aside className={`
-          fixed inset-0 z-50 lg:static lg:z-0 lg:block lg:w-80 
-          transform ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
-          transition-transform duration-300 ease-in-out
-          bg-white dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent p-6 lg:p-0
-          overflow-y-auto
-        `}>
-                    <div className="flex lg:hidden justify-between items-center mb-8">
-                        <h2 className="text-2xl font-serif font-black text-primary dark:text-white">Filters</h2>
-                        <button onClick={() => setShowFilters(false)} className="p-2 rounded-xl bg-gray-50 dark:bg-gray-700">
-                            <X size={24} className="text-gray-400" />
+                    fixed lg:sticky top-0 lg:top-28 left-0 bottom-0 w-[280px] lg:w-[300px] bg-white dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent
+                    z-50 lg:z-30 p-6 lg:p-0 overflow-y-auto lg:overflow-visible transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
+                    ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                `}>
+                    <div className="flex lg:hidden justify-between items-center mb-6">
+                        <h2 className="text-xl font-serif font-black text-primary dark:text-white">Filters</h2>
+                        <button
+                            onClick={() => setShowFilters(false)}
+                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        >
+                            <X size={20} className="text-gray-500" />
                         </button>
                     </div>
 
-                    <div className="sticky top-28 space-y-8 bg-white dark:bg-gray-800 p-8 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-[0_20px_50px_rgba(11,28,45,0.03)] dark:shadow-none">
+                    <div className="space-y-6 lg:bg-white lg:dark:bg-gray-800 lg:p-6 lg:rounded-[2rem] lg:border lg:border-gray-100 lg:dark:border-gray-700 lg:shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
+                        {/* Search Keyword */}
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">Location</label>
-                            <div className="relative">
-                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">Search</label>
+                            <div className="relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-secondary transition-colors" size={16} />
+                                <input
+                                    type="text"
+                                    name="category"
+                                    placeholder="Job title or keyword"
+                                    value={filters.category}
+                                    onChange={handleFilterChange}
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-none focus:ring-2 focus:ring-secondary/20 transition-all font-heading font-medium text-sm text-primary dark:text-white placeholder:text-gray-400"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Location */}
+                        <div>
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">Location</label>
+                            <div className="relative group">
+                                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-secondary transition-colors" size={16} />
                                 <input
                                     type="text"
                                     name="city"
                                     placeholder="City or Region"
                                     value={filters.city}
                                     onChange={handleFilterChange}
-                                    className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border-none focus:ring-2 focus:ring-secondary/20 transition-all font-heading font-medium text-sm text-primary dark:text-white"
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-none focus:ring-2 focus:ring-secondary/20 transition-all font-heading font-medium text-sm text-primary dark:text-white placeholder:text-gray-400"
                                 />
                             </div>
                         </div>
 
+                        {/* Job Type */}
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">Job Type</label>
-                            <div className="space-y-3">
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">Job Type</label>
+                            <div className="space-y-2">
                                 {['FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE'].map((type) => (
-                                    <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                                    <label key={type} className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-700/30 p-2 -mx-2 rounded-lg transition-colors">
+                                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${filters.jobType === type ? 'border-secondary bg-secondary' : 'border-gray-300 dark:border-gray-600 group-hover:border-secondary'}`}>
+                                            {filters.jobType === type && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                        </div>
+                                        <span className={`text-xs font-bold uppercase tracking-wider transition-colors ${filters.jobType === type ? 'text-primary dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                                            {type.replace('_', ' ')}
+                                        </span>
                                         <input
                                             type="radio"
                                             name="jobType"
@@ -124,25 +159,20 @@ const JobBoardPage = () => {
                                             onChange={handleFilterChange}
                                             className="hidden"
                                         />
-                                        <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${filters.jobType === type ? 'border-secondary bg-secondary shadow-lg shadow-secondary/20' : 'border-gray-200 dark:border-gray-600 group-hover:border-secondary'}`}>
-                                            {filters.jobType === type && <div className="w-2 h-2 rounded-full bg-white" />}
-                                        </div>
-                                        <span className={`text-sm font-heading font-medium transition-colors ${filters.jobType === type ? 'text-primary dark:text-white' : 'text-text-secondary dark:text-gray-400 group-hover:text-primary'}`}>
-                                            {type.replace('_', ' ')}
-                                        </span>
                                     </label>
                                 ))}
                             </div>
                         </div>
 
+                        {/* Workplace Type */}
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">Workplace</label>
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">Workplace</label>
                             <div className="flex flex-wrap gap-2">
                                 {['ON_SITE', 'REMOTE', 'HYBRID'].map((type) => (
                                     <button
                                         key={type}
                                         onClick={() => setFilters({ ...filters, workplaceType: filters.workplaceType === type ? '' : type })}
-                                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border ${filters.workplaceType === type ? 'bg-primary dark:bg-primary-light text-white border-primary border-none shadow-md' : 'bg-gray-50 dark:bg-gray-700/50 text-gray-500 border-gray-100 dark:border-gray-700 hover:border-secondary'}`}
+                                        className={`px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all border ${filters.workplaceType === type ? 'bg-primary dark:bg-white text-white dark:text-primary border-transparent shadow-lg shadow-primary/20' : 'bg-transparent text-gray-500 border-gray-200 dark:border-gray-700 hover:border-gray-300'}`}
                                     >
                                         {type.replace('_', ' ')}
                                     </button>
@@ -150,36 +180,43 @@ const JobBoardPage = () => {
                             </div>
                         </div>
 
-                        <Button variant="primary" fullWidth size="md" onClick={applyFilters}>
-                            Apply Filters
-                        </Button>
-                        <button
-                            onClick={clearFilters}
-                            className="w-full text-xs font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors py-2"
-                        >
-                            Reset All
-                        </button>
+                        <div className="pt-2 space-y-3">
+                            <Button variant="secondary" fullWidth size="md" onClick={applyFilters} className="shadow-xl shadow-secondary/20">
+                                Apply Filters
+                            </Button>
+                            <button
+                                onClick={clearFilters}
+                                className="w-full text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 transition-colors py-2"
+                            >
+                                Clear All
+                            </button>
+                        </div>
                     </div>
                 </aside>
 
                 {/* Job Listings Grid */}
-                <div className="flex-grow">
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+                <div className="flex-grow min-w-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
                         {loading ? (
                             Array(6).fill(0).map((_, i) => (
-                                <div key={i} className="h-[320px] rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 animate-pulse shadow-sm" />
+                                <div key={i} className="h-[280px] rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 animate-pulse" />
                             ))
                         ) : jobs.length > 0 ? (
                             jobs.map((job) => (
                                 <JobCard key={job.id} job={job} />
                             ))
                         ) : (
-                            <div className="col-span-full py-20 text-center bg-white dark:bg-gray-800 rounded-3xl border border-dashed border-gray-200 dark:border-gray-700">
-                                <div className="w-20 h-20 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <Briefcase size={32} className="text-gray-300" />
+                            <div className="col-span-full py-24 text-center">
+                                <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Search size={40} className="text-gray-300" />
                                 </div>
-                                <h3 className="text-2xl font-serif font-black text-primary dark:text-white mb-2">No jobs found</h3>
-                                <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters to find more opportunities.</p>
+                                <h3 className="text-3xl font-serif font-black text-primary dark:text-white mb-3">No jobs found</h3>
+                                <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto leading-relaxed">
+                                    We couldn't find any matches for your current filters. Try adjusting your search criteria or clearing filters.
+                                </p>
+                                <button onClick={clearFilters} className="mt-8 text-secondary font-black uppercase tracking-widest text-xs hover:underline">
+                                    Clear all filters
+                                </button>
                             </div>
                         )}
                     </div>

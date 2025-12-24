@@ -38,6 +38,9 @@ import CompanyProfilePage from './pages/employer/CompanyProfilePage';
 import ManageJobsPage from './pages/employer/ManageJobsPage';
 import ApplicantsPage from './pages/employer/ApplicantsPage';
 
+// Payment Pages
+import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
+
 import useAuthStore from './store/authStore';
 import { ROUTES } from './config/constants';
 
@@ -74,11 +77,6 @@ function AppContent() {
     const dashboardPaths = [
       '/dashboard',
       '/admin/',
-      // '/jobs', // Removed to allow Navbar on Job Board and Manage Jobs if needed, but Job Board uses DashboardNavigation? 
-      // actually JobBoard uses DashboardLayout, so we WANT valid Navbar hidden? 
-      // Wait, DashboardLayout HAS its own internal Navbar.
-      // If I want PostJob to use MAIN Navbar, I remove it from here.
-      // '/post-job', // REMOVED
       '/applications', // Seeker applications
       '/messages',
       '/saved',
@@ -91,8 +89,10 @@ function AppContent() {
       '/reports',
       '/billing',
       '/settings',
-      '/cv-builder',
-      '/alerts'
+      '/seeker/',
+      '/employer/profile', // Employer profile uses DashboardLayout
+      '/alerts', // Job alerts
+      '/cv-builder'
     ];
 
     // Special handling: 
@@ -135,6 +135,9 @@ function AppContent() {
 
           <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLoginPage />} />
           <Route path={ROUTES.ADMIN_VERIFY_OTP} element={<AdminVerifyOtpPage />} />
+
+          {/* Payment Routes */}
+          <Route path="/payment/callback" element={<PaymentCallbackPage />} />
 
           {/* Protected Routes - General Dashboard */}
           <Route path={ROUTES.DASHBOARD} element={<ProtectedRoute><DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>} />

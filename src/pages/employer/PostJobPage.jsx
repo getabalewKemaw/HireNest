@@ -1,19 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     CheckCircle2, ArrowRight, Briefcase, MapPin,
     DollarSign, FileText, LayoutGrid, Calendar,
     ChevronRight, Sparkles, Building2, GraduationCap,
-    Users, Info, X, Globe, Map
+    Users, Info, X, Globe, Map, AlertCircle
 } from 'lucide-react';
 import jobService from '../../services/jobService';
+import paymentService from '../../services/paymentService';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import PaymentModal from '../../components/PaymentModal';
+import useAuthStore from '../../store/authStore';
 
 const PostJobPage = () => {
     const navigate = useNavigate();
+    const { user } = useAuthStore();
     const [loading, setLoading] = useState(false);
     const [step, setStep] = useState(1);
+
+    // Payment state
+    const [paymentRequired, setPaymentRequired] = useState(false);
+    const [paymentInfo, setPaymentInfo] = useState(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [checkingPayment, setCheckingPayment] = useState(true);
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -36,6 +47,25 @@ const PostJobPage = () => {
     const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState([]);
     const [errors, setErrors] = useState({});
+
+    // Check payment requirement on mount
+    useEffect(() => {
+        checkPaymentRequirement();
+    }, []);
+
+    const checkPaymentRequirement = async () => {
+        try {
+            setCheckingPayment(true);
+            const response = await paymentService.checkPaymentRequirement();
+            console.log('💳 Payment Check Response:', response);
+            setPaymentRequired(response.needsPayment);
+            setPaymentInfo(response);
+        } catch (error) {
+            console.error('❌ Error checking payment requirement:', error);
+        } finally {
+            setCheckingPayment(false);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -64,6 +94,12 @@ const PostJobPage = () => {
 
         // Prevent submission unless we are on the final step
         if (step !== 3) return;
+
+        // Check if payment is required
+        if (paymentRequired) {
+            setShowPaymentModal(true);
+            return;
+        }
 
         setLoading(true);
 
@@ -128,8 +164,39 @@ const PostJobPage = () => {
     };
     const prevStep = () => setStep(step - 1);
 
+    const preparedJobData = {
+        ...formData,
+        experienceDescription: tags.join(', '),
+        salaryMin: formData.salaryMin === '' ? null : parseFloat(formData.salaryMin),
+        salaryMax: formData.salaryMax === '' ? null : parseFloat(formData.salaryMax),
+        vacancyCount: parseInt(formData.vacancyCount) || 1,
+        deadline: formData.deadline === '' ? null : formData.deadline,
+    };
+
+    console.log('📦 Prepared Job Data for Payment:', preparedJobData);
+
     return (
         <div className="min-h-screen bg-[#F8FAFC] dark:bg-gray-900 pt-32 pb-40 px-6 font-sans">
+            {/* Payment Modal */}
+            <PaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)}
+                onSuccess={() => {
+                    setPaymentRequired(false);
+                    setShowPaymentModal(false);
+                    checkPaymentRequirement();
+                }}
+                amount={paymentInfo?.price || 500}
+                currency={paymentInfo?.currency || 'ETB'}
+                userInfo={{
+                    email: user?.email,
+                    firstName: user?.firstName || user?.name?.split(' ')[0],
+                    lastName: user?.lastName || user?.name?.split(' ')[1],
+                    phoneNumber: user?.phoneNumber
+                }}
+                jobData={preparedJobData}
+            />
+
             <div className="max-w-4xl mx-auto">
                 {/* Header Phase */}
                 <div className="mb-16 text-center">
@@ -140,6 +207,32 @@ const PostJobPage = () => {
                         Find the perfect talent for your team. Just follow the steps to create a listing that stands out.
                     </p>
                 </div>
+
+                {/* Payment Required Banner */}
+                {console.log('🔍 Banner Check - paymentRequired:', paymentRequired, 'showPaymentModal:', showPaymentModal)}
+                {paymentRequired && !showPaymentModal && (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-3xl p-6 mb-8 max-w-2xl mx-auto">
+                        <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                <AlertCircle className="text-amber-600 dark:text-amber-400" size={24} />
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="font-black text-amber-900 dark:text-amber-100 text-lg mb-2">Payment Required</h4>
+                                <p className="text-sm text-amber-700 dark:text-amber-300 mb-4 font-medium">
+                                    You need to pay <span className="font-black">{paymentInfo?.price} {paymentInfo?.currency}</span> to post this job.
+                                    Your first job was free!
+                                </p>
+                                <button
+                                    onClick={() => setShowPaymentModal(true)}
+                                    className="px-6 py-3 bg-secondary text-white font-bold rounded-xl hover:bg-secondary-dark transition-all flex items-center gap-2"
+                                >
+                                    <DollarSign size={18} />
+                                    Pay Now to Continue
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Progress Steps */}
                 <div className="flex justify-between items-center max-w-2xl mx-auto mb-20 relative">

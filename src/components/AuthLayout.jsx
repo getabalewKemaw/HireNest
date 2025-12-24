@@ -28,9 +28,7 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
 
                     <div className="relative z-20 mt-auto p-20 xl:p-24">
-                        <Link to={ROUTES.HOME} className="inline-block mb-12 group transition-transform hover:-translate-y-1">
-                            <img src="/image.png" alt="HireNest" className="h-12 w-auto invert brightness-0" />
-                        </Link>
+
                         <h1 className="text-5xl xl:text-7xl font-serif font-black text-white mb-8 leading-[1.1] tracking-tight">
                             Unlock your <span className="text-secondary-light underline decoration-accent-light underline-offset-[12px] italic font-medium">potential</span> today.
                         </h1>
@@ -65,8 +63,8 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
                     </div>
 
                     <div className="max-w-md w-full mx-auto my-auto animate-fade-in-up">
-                        <div className="flex lg:hidden justify-center mb-12">
-                            <img src="/image.png" alt="HireNest" className="h-12 w-auto dark:invert" />
+                        <div className="flex justify-center mb-12">
+                            <img src="/image.png" alt="EtWorks" className="h-20 w-auto dark:invert rounded-3xl" />
                         </div>
 
                         <div className="mb-14 text-center lg:text-left">
@@ -85,7 +83,7 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
                         </div>
 
                         <div className="mt-16 text-center text-sm text-gray-400 dark:text-gray-500 font-light tracking-widest uppercase">
-                            &copy; {new Date().getFullYear()} HireNest. AI-Powered Careers.
+                            &copy; {new Date().getFullYear()} EtWorks. AI-Powered Careers.
                         </div>
                     </div>
                 </div>

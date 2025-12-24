@@ -1,8 +1,9 @@
 import HeroSection from '../components/landing/HeroSection';
-import StatsSection from '../components/landing/StatsSection';
+
 import FeaturesSection from '../components/landing/FeaturesSection';
 import AboutSection from '../components/landing/AboutSection';
 import HowItWorksSection from '../components/landing/HowItWorksSection';
+import FeaturedJobsSection from '../components/landing/FeaturedJobsSection';
 import FAQSection from '../components/landing/FAQSection';
 import CTASection from '../components/landing/CTASection';
 
@@ -29,12 +30,7 @@ const LandingPage = () => {
           <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent"></div>
         </div>
 
-        <StatsSection />
 
-        {/* Modern Divider */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 to-transparent"></div>
-        </div>
 
         <div className="bg-gray-50/50 dark:bg-black/10 transition-colors duration-500">
           <FeaturesSection />
@@ -59,6 +55,7 @@ const LandingPage = () => {
           <div className="h-px w-full bg-gradient-to-r from-transparent via-secondary/10 to-transparent"></div>
         </div>
 
+        <FeaturedJobsSection />
         <FAQSection />
         <CTASection />
       </div>

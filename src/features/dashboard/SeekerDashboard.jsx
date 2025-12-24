@@ -26,10 +26,10 @@ const SeekerDashboard = ({ user, profile }) => {
     const [loading, setLoading] = useState(true);
 
     const stats = [
-        { label: 'Active Applications', value: recentApps.length, icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-        { label: 'Interviews', value: recentApps.filter(a => a.status === 'INTERVIEWING').length, icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Matched Jobs', value: matchedJobs.length, icon: Sparkles, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-        { label: 'Alerts Active', value: alertsCount.toString(), icon: Bell, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+        { label: 'Active Applications', value: '12', icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+        { label: 'Upcoming Interviews', value: '3', icon: Clock, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+        { label: 'Saved Opportunities', value: '24', icon: Bookmark, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+        { label: 'Profile Visibility', value: 'High', icon: TrendingUp, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
     ];
 
     useEffect(() => {
@@ -84,14 +84,14 @@ const SeekerDashboard = ({ user, profile }) => {
                     <div className="hidden lg:block">
                         <div className="bg-white/10 backdrop-blur-md p-6 rounded-[2rem] border border-white/10 w-64 shadow-2xl">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shadow-lg shadow-secondary/20">
                                     <Award size={20} className="text-white" />
                                 </div>
                                 <div className="text-sm font-black">Top Talent</div>
                             </div>
                             <div className="space-y-4">
                                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 w-[85%] rounded-full shadow-sm"></div>
+                                    <div className="h-full bg-secondary w-[85%] rounded-full shadow-sm"></div>
                                 </div>
                                 <div className="flex justify-between text-[10px] font-bold text-white/60 uppercase tracking-widest">
                                     <span>Profile Completion</span>
@@ -111,8 +111,8 @@ const SeekerDashboard = ({ user, profile }) => {
                             <div className={`${stat.bg} ${stat.color} p-4 rounded-2xl group-hover:scale-110 transition-transform`}>
                                 <stat.icon size={22} />
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-lg">
-                                <TrendingUp size={12} /> Live
+                            <div className="flex items-center gap-1 text-[10px] font-black text-blue-500 bg-blue-500/10 px-2 py-1 rounded-lg">
+                                <TrendingUp size={12} /> +8.4%
                             </div>
                         </div>
                         <div className="text-3xl font-black text-primary dark:text-white mb-1">{stat.value}</div>
@@ -151,12 +151,8 @@ const SeekerDashboard = ({ user, profile }) => {
                                     </div>
 
                                     <div className="flex items-start gap-6">
-                                        <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center text-2xl font-black text-gray-300 border border-gray-100 dark:border-white/5 overflow-hidden">
-                                            {job.logoUrl ? (
-                                                <img src={job.logoUrl} alt={job.companyName} className="w-full h-full object-cover" />
-                                            ) : (
-                                                job.companyName?.charAt(0)
-                                            )}
+                                        <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center text-2xl font-black text-gray-300 border border-gray-100 dark:border-white/5">
+                                            {job.companyName?.charAt(0)}
                                         </div>
                                         <div className="flex-1">
                                             <h3 className="text-xl font-bold text-primary dark:text-white group-hover:text-secondary transition-colors mb-2 uppercase tracking-tight leading-tight">{job.title}</h3>
@@ -165,9 +161,22 @@ const SeekerDashboard = ({ user, profile }) => {
                                                     <Globe size={14} /> {job.companyName}
                                                 </span>
                                                 <span>•</span>
-                                                <span>{job.city || job.region || 'Remote'}</span>
+                                                <span>{job.addressCity || 'Remote'}</span>
                                                 <span>•</span>
-                                                <span>{job.currency} <span className="text-emerald-500 font-bold">{job.salaryMin} - {job.salaryMax}</span></span>
+                                                <span>Est. Budget: <span className="text-secondary font-bold">{job.currency || '$'}{job.salaryMin?.toLocaleString()}</span></span>
+                                            </div>
+
+                                            <div className="flex flex-wrap gap-2 mb-6">
+                                                {job.jobType && (
+                                                    <span className="px-3 py-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                        {job.jobType.replace('_', ' ')}
+                                                    </span>
+                                                )}
+                                                {job.workplaceType && (
+                                                    <span className="px-3 py-1 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-lg text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                        {job.workplaceType.replace('_', ' ')}
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <div className="flex items-center gap-4">
