@@ -45,9 +45,9 @@ const HeroSection = () => {
                         <div className="flex flex-col sm:flex-row items-center gap-6">
                             <Button
                                 variant="secondary"
-                                size="lg"
+                                size="md"
                                 onClick={() => navigate(ROUTES.REGISTER)}
-                                className="w-full sm:w-auto font-accent translate-y-0 hover:-translate-y-2 transition-all duration-500"
+                                className="w-full sm:w-auto font-accent translate-y-0 hover:-translate-y-2 transition-all duration-500 !px-10 shadow-xl shadow-secondary/20"
                             >
                                 Get Started Now <ArrowRight size={20} className="ml-2" />
                             </Button>

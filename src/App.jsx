@@ -37,6 +37,7 @@ import PostJobPage from './pages/employer/PostJobPage';
 import CompanyProfilePage from './pages/employer/CompanyProfilePage';
 import ManageJobsPage from './pages/employer/ManageJobsPage';
 import ApplicantsPage from './pages/employer/ApplicantsPage';
+import CompanyVerificationPage from './pages/employer/CompanyVerificationPage';
 
 // Payment Pages
 import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
@@ -159,6 +160,7 @@ function AppContent() {
           <Route path="/employer/profile" element={<ProtectedRoute allowedRoles="EMPLOYER"><DashboardLayout><CompanyProfilePage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/jobs/manage" element={<ProtectedRoute allowedRoles="EMPLOYER"><ManageJobsPage /></ProtectedRoute>} />
           <Route path="/applicants" element={<ProtectedRoute allowedRoles="EMPLOYER"><ApplicantsPage /></ProtectedRoute>} />
+          <Route path="/employer/verify" element={<ProtectedRoute allowedRoles="EMPLOYER"><><CompanyVerificationPage /></></ProtectedRoute>} />
 
           {/* Admin Dashboard Routes */}
           <Route path={ROUTES.ADMIN.DASHBOARD} element={<ProtectedRoute allowedRoles="ADMIN"><DashboardLayout><DashboardPage /></DashboardLayout></ProtectedRoute>} />

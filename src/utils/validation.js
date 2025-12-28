@@ -87,6 +87,19 @@ export const validateRequired = (value, fieldName = 'This field') => {
   return null;
 };
 
+export const getPasswordStrength = (password) => {
+  let score = 0;
+
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[@$!%*#?&]/.test(password)) score++;
+
+  if (score <= 1) return 'weak';
+  if (score === 2) return 'medium';
+  return 'strong';
+};
+
 /**
  * Sanitizes user input to prevent XSS
  * @param {string} input - Input to sanitize

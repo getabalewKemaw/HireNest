@@ -63,16 +63,32 @@ const useAuthStore = create((set, get) => ({
               name: `${profile.firstName} ${profile.lastName}`.trim() || state.user.email?.split('@')[0],
               firstName: profile.firstName,
               lastName: profile.lastName,
-              profileImage: profile.profileImageUrl, // Map profileImageUrl to profileImage
-              profileImageUrl: profile.profileImageUrl, // Keep both for safety
+              profileImage: profile.profileImageUrl,
+              profileImageUrl: profile.profileImageUrl,
               phone: profile.phone,
               gender: profile.gender,
             }
           }));
-          console.log('👤 [AUTH] Profile synced successfully');
+          console.log('👤 [AUTH] Seeker profile synced successfully');
+        }
+      } else if (user.userType === 'EMPLOYER') {
+        try {
+          const response = await api.get('/api/v1/company-profile/me');
+          if (response.data) {
+            set((state) => ({
+              user: {
+                ...state.user,
+                name: response.data.companyName || state.user.email?.split('@')[0],
+                companyName: response.data.companyName,
+                logoUrl: response.data.logoUrl
+              }
+            }));
+            console.log('👤 [AUTH] Employer profile synced successfully');
+          }
+        } catch (e) {
+          console.warn('👤 [AUTH] Employer profile sync skipped - profile may not exist yet');
         }
       }
-      // Add EMPLOYER sync here if needed later
     } catch (err) {
       console.error('👤 [AUTH] Profile sync failed:', err.message);
     }

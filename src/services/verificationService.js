@@ -7,6 +7,7 @@ const verificationService = {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            timeout: 60000 // 60s timeout for file upload
         });
     },
 

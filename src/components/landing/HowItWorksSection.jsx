@@ -1,4 +1,5 @@
 import { ArrowRight, UserPlus, Search, Rocket, CheckCircle2 } from 'lucide-react';
+import Button from '../Button';
 
 const steps = [
     {
@@ -29,7 +30,7 @@ const steps = [
 
 const HowItWorksSection = () => {
     return (
-        <section className="py-32 bg-transparent relative z-10 transition-colors duration-500 overflow-hidden">
+        <section id="how-it-works" className="py-32 bg-transparent relative z-10 transition-colors duration-500 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Centered Heading Section */}
                 <div className="text-center mb-16 space-y-6">
@@ -69,6 +70,11 @@ const HowItWorksSection = () => {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                        <div className="pt-8">
+                            <Button variant="secondary" size="md" className="!rounded-[1.25rem] shadow-xl shadow-secondary/20 group !px-10">
+                                Start Your Process <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                            </Button>
                         </div>
                     </div>
 

@@ -95,6 +95,10 @@ export const ROUTES = {
   ADMIN_LOGIN: '/admin/auth/login',
   ADMIN_VERIFY_OTP: '/admin/auth/verify-otp',
 
+  // Public Pages
+  CONTACT: '/contact',
+  HOW_IT_WORKS: '/how-it-works',
+
   // Protected Routes
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',

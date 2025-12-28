@@ -29,9 +29,12 @@ const MobileMenu = ({
                         <Link to="/talent" className={menuLinkClass} onClick={() => setIsOpen(false)}>
                             <Users size={20} /> Hire Talent
                         </Link>
-                        <Link to="/resources" className={menuLinkClass} onClick={() => setIsOpen(false)}>
-                            <Globe size={20} /> Resources
-                        </Link>
+                        <a href="#how-it-works" className={menuLinkClass} onClick={() => setIsOpen(false)}>
+                            <Rocket size={20} /> How It Works
+                        </a>
+                        <a href="#contact" className={menuLinkClass} onClick={() => setIsOpen(false)}>
+                            <Globe size={20} /> Contact Us
+                        </a>
                         <div className="h-px bg-gray-100 dark:bg-white/5 my-4"></div>
                         <Link
                             to={ROUTES.LOGIN}

@@ -45,7 +45,7 @@ const SelectRolePage = () => {
                 });
             }
 
-            if (role === 'EMPLOYER') navigate(ROUTES.EMPLOYER.DASHBOARD);
+            if (role === 'EMPLOYER') navigate('/employer/verify');
             else navigate(ROUTES.SEEKER.DASHBOARD);
         } catch (err) {
             // Error

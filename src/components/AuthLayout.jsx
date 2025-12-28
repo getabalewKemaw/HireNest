@@ -44,7 +44,7 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
                         {backButton ? (
                             <button
                                 onClick={() => navigate(-1)}
-                                className="p-2.5 rounded-xl text-gray-400 hover:text-primary dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group flex items-center gap-2"
+                                className="p-2.5 rounded-xl text-black hover:text-primary dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group flex items-center gap-2"
                                 aria-label="Go back"
                             >
                                 <ChevronLeft size={22} className="transform group-hover:-translate-x-2 transition-transform duration-300" />
@@ -83,7 +83,7 @@ const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
                         </div>
 
                         <div className="mt-16 text-center text-sm text-gray-400 dark:text-gray-500 font-light tracking-widest uppercase">
-                            &copy; {new Date().getFullYear()} EtWorks. AI-Powered Careers.
+                            &copy; {new Date().getFullYear()} EtWorks Careers.
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,7 @@ import DeveloperSection from '../components/landing/DeveloperSection';
 import FAQSection from '../components/landing/FAQSection';
 import CTASection from '../components/landing/CTASection';
 import BottomCTASection from '../components/landing/BottomCTASection';
+import ContactSection from '../components/landing/ContactSection';
 
 /**
  * Landing Page Component
@@ -64,6 +65,9 @@ const LandingPage = () => {
         {/* Original CTA Section */}
         <CTASection />
         <DeveloperSection />
+
+        {/* NEW Contact Section */}
+        <ContactSection />
 
         {/* New Premium Bottom CTA */}
         <BottomCTASection />

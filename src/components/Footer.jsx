@@ -58,16 +58,26 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <h4 className="font-bold text-white text-lg mb-8 tracking-wide">Company</h4>
             <ul className="space-y-4">
-              {['About Us', 'Careers', 'Blog', 'Contact'].map((item) => (
-                <li key={item}>
-                  <Link to="#" className="text-gray-400 hover:text-secondary transition-colors font-serif flex items-center gap-2">
-                    {item}
-                    {item === 'Careers' && (
-                      <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold uppercase rounded-full tracking-wider">Hiring</span>
-                    )}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <a href="#how-it-works" className="text-gray-400 hover:text-secondary transition-colors font-serif">
+                  How it works
+                </a>
+              </li>
+              <li>
+                <Link to="#" className="text-gray-400 hover:text-secondary transition-colors font-serif flex items-center gap-2">
+                  Careers <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-bold uppercase rounded-full tracking-wider">Hiring</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="text-gray-400 hover:text-secondary transition-colors font-serif">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <a href="#contact" className="text-gray-400 hover:text-secondary transition-colors font-serif">
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 

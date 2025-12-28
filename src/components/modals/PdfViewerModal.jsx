@@ -9,15 +9,18 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Sanitize URL to fix legacy data with duplicated paths
+    const cleanUrl = pdfUrl ? pdfUrl.replace(/(employers\/verification\/)+/g, 'employers/verification/') : null;
+
     useEffect(() => {
         let url = null;
-        if (isOpen && pdfUrl) {
+        if (isOpen && cleanUrl) {
             const loadPdf = async () => {
                 setLoading(true);
                 setError(null);
                 try {
                     // Fetch the PDF binary data
-                    const response = await fetch(pdfUrl);
+                    const response = await fetch(cleanUrl);
                     if (!response.ok) throw new Error('Failed to load PDF');
                     const originalBlob = await response.blob();
 
@@ -29,7 +32,9 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
                     setLocalUrl(url);
                 } catch (err) {
                     console.error('PdfViewer Error:', err);
-                    setError('Could not preview this document. You can still download it using the button below.');
+                    // Fallback to direct URL if fetch fails (e.g. CORS/Auth issues)
+                    setLocalUrl(cleanUrl);
+                    setError(null);
                 } finally {
                     setLoading(false);
                 }
@@ -42,7 +47,7 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
                 window.URL.revokeObjectURL(url);
             }
         };
-    }, [isOpen, pdfUrl]);
+    }, [isOpen, cleanUrl]);
 
     if (!isOpen) return null;
 
@@ -78,7 +83,7 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
                         </button>
 
                         <button
-                            onClick={() => downloadFile(pdfUrl, `${title.replace(/\s+/g, '_')}.pdf`)}
+                            onClick={() => downloadFile(cleanUrl, `${title.replace(/\s+/g, '_')}.pdf`)}
                             className="p-3 hover:bg-secondary/10 text-secondary rounded-2xl transition-all"
                             title="Download PDF"
                         >
@@ -110,7 +115,7 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
                             </div>
                             <h4 className="text-lg font-bold text-primary dark:text-white mb-2">Preview Unavailable</h4>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{error}</p>
-                            <Button variant="secondary" onClick={() => downloadFile(pdfUrl, `${title}.pdf`)}>
+                            <Button variant="secondary" onClick={() => downloadFile(cleanUrl, `${title}.pdf`)}>
                                 Download Instead
                             </Button>
                         </div>
@@ -134,7 +139,7 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
                             variant="secondary"
                             size="sm"
                             icon={<Download size={16} />}
-                            onClick={() => downloadFile(pdfUrl, `${title.replace(/\s+/g, '_')}.pdf`)}
+                            onClick={() => downloadFile(cleanUrl, `${title.replace(/\s+/g, '_')}.pdf`)}
                         >
                             Download PDF
                         </Button>

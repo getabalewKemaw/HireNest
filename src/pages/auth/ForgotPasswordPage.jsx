@@ -29,7 +29,7 @@ const ForgotPasswordPage = () => {
                 setError(result.error.message);
             }
         } catch (err) {
-            setError('Failed to send reset email');
+            setError('Failed to send reset email' + err.message);
         } finally {
             setIsLoading(false);
         }

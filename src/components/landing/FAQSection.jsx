@@ -61,7 +61,7 @@ const FAQSection = () => {
                                     }`}>
                                     {item.question}
                                 </span>
-                                <div className={`p-3 rounded-2xl transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-110' : 'bg-primary/5 dark:bg-white/5 text-primary dark:text-gray-300'
+                                <div className={`p-3 rounded-2xl transition-all duration-300 ${openIndex === index ? 'bg-secondary text-white shadow-lg shadow-secondary/20 scale-110' : 'bg-secondary/5 text-secondary dark:bg-white/5'
                                     }`}>
                                     {openIndex === index ? <Minus size={18} /> : <Plus size={18} />}
                                 </div>

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import jobService from '../../services/jobService';
 import paymentService from '../../services/paymentService';
+import verificationService from '../../services/verificationService';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import PaymentModal from '../../components/PaymentModal';
@@ -24,6 +25,11 @@ const PostJobPage = () => {
     const [paymentInfo, setPaymentInfo] = useState(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [checkingPayment, setCheckingPayment] = useState(true);
+
+    // Verification state
+    const [verificationStatus, setVerificationStatus] = useState(null); // PENDING, APPROVED, etc
+    const [isVerified, setIsVerified] = useState(true); // Default true to avoid flash
+    const [checkingVerification, setCheckingVerification] = useState(true);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -48,10 +54,31 @@ const PostJobPage = () => {
     const [tags, setTags] = useState([]);
     const [errors, setErrors] = useState({});
 
-    // Check payment requirement on mount
+    // Check requirements on mount
     useEffect(() => {
+        checkVerification();
         checkPaymentRequirement();
     }, []);
+
+    const checkVerification = async () => {
+        try {
+            setCheckingVerification(true);
+            const response = await verificationService.getVerificationStatus();
+            const data = response.data;
+            if (data && data.status === 'APPROVED' && data.codeUsed) {
+                setIsVerified(true);
+            } else {
+                setIsVerified(false);
+                setVerificationStatus(data?.status || 'NOT_SUBMITTED');
+            }
+        } catch (error) {
+            console.error('Checking verification failed:', error);
+            setIsVerified(false);
+            setVerificationStatus('NOT_SUBMITTED');
+        } finally {
+            setCheckingVerification(false);
+        }
+    };
 
     const checkPaymentRequirement = async () => {
         try {
@@ -208,414 +235,440 @@ const PostJobPage = () => {
                     </p>
                 </div>
 
-                {/* Payment Required Banner */}
-                {console.log('🔍 Banner Check - paymentRequired:', paymentRequired, 'showPaymentModal:', showPaymentModal)}
-                {paymentRequired && !showPaymentModal && (
-                    <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-3xl p-6 mb-8 max-w-2xl mx-auto">
-                        <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <AlertCircle className="text-amber-600 dark:text-amber-400" size={24} />
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="font-black text-amber-900 dark:text-amber-100 text-lg mb-2">Payment Required</h4>
-                                <p className="text-sm text-amber-700 dark:text-amber-300 mb-4 font-medium">
-                                    You need to pay <span className="font-black">{paymentInfo?.price} {paymentInfo?.currency}</span> to post this job.
-                                    Your first job was free!
-                                </p>
-                                <button
-                                    onClick={() => setShowPaymentModal(true)}
-                                    className="px-6 py-3 bg-secondary text-white font-bold rounded-xl hover:bg-secondary-dark transition-all flex items-center gap-2"
-                                >
-                                    <DollarSign size={18} />
-                                    Pay Now to Continue
-                                </button>
-                            </div>
+                {/* Verification Blocking Banner */}
+                {!checkingVerification && !isVerified && (
+                    <div className="bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-900/30 rounded-[2.5rem] p-10 text-center mb-10 max-w-3xl mx-auto shadow-xl">
+                        <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                            <Building2 size={40} />
                         </div>
+                        <h2 className="text-3xl font-black text-primary dark:text-white mb-4 italic">Organization Not Verified</h2>
+                        <p className="text-lg text-gray-500 dark:text-gray-400 font-medium mb-8 max-w-xl mx-auto leading-relaxed">
+                            To ensure the safety of our candidates, all companies must be verified before posting jobs. Please complete the verification process.
+                        </p>
+                        <Button
+                            onClick={() => navigate('/employer/verify')}
+                            variant="primary"
+                            size="lg"
+                            className="w-full max-w-sm mx-auto shadow-xl shadow-primary/20"
+                        >
+                            Verify Company Now <ArrowRight size={20} className="ml-2" />
+                        </Button>
                     </div>
                 )}
 
-                {/* Progress Steps */}
-                <div className="flex justify-between items-center max-w-2xl mx-auto mb-20 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 -z-10 rounded-full"></div>
-                    <div
-                        className="absolute top-1/2 left-0 h-1 bg-secondary -z-0 rounded-full transition-all duration-500"
-                        style={{ width: `${((step - 1) / 2) * 100}%` }}
-                    ></div>
-
-                    {[1, 2, 3].map((s) => (
-                        <div key={s} className={`relative flex flex-col items-center gap-3 ${s <= step ? 'text-secondary' : 'text-gray-400'}`}>
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-4 transition-all duration-500 ${s < step ? 'bg-secondary border-secondary text-white' :
-                                s === step ? 'bg-white dark:bg-gray-900 border-secondary text-secondary scale-125 shadow-xl' :
-                                    'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-300'
-                                }`}>
-                                {s < step ? <CheckCircle2 size={16} /> : s}
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest bg-[#F8FAFC] dark:bg-gray-900 px-2">
-                                {s === 1 ? 'Details' : s === 2 ? 'Description' : 'Compensation'}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-
-                <form
-                    onSubmit={handleSubmit}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-                            e.preventDefault();
-                        }
-                    }}
-                    className="space-y-12"
-                >
-                    {step === 1 && (
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
-                            <div className="max-w-2xl mx-auto space-y-10">
-                                <div className="text-center mb-10">
-                                    <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Basic Information</h2>
-                                    <p className="text-gray-400 text-sm">Let's start with the core details of the position.</p>
+                {/* Hide Form if not verified */}
+                {(!checkingVerification && !isVerified) ? null : (
+                    <>
+                        {/* Payment Required Banner */}
+                        {console.log('🔍 Banner Check - paymentRequired:', paymentRequired, 'showPaymentModal:', showPaymentModal)}
+                        {paymentRequired && !showPaymentModal && (
+                            <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-3xl p-6 mb-8 max-w-2xl mx-auto">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                        <AlertCircle className="text-amber-600 dark:text-amber-400" size={24} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="font-black text-amber-900 dark:text-amber-100 text-lg mb-2">Payment Required</h4>
+                                        <p className="text-sm text-amber-700 dark:text-amber-300 mb-4 font-medium">
+                                            You need to pay <span className="font-black">{paymentInfo?.price} {paymentInfo?.currency}</span> to post this job.
+                                            Your first job was free!
+                                        </p>
+                                        <button
+                                            onClick={() => setShowPaymentModal(true)}
+                                            className="px-6 py-3 bg-secondary text-white font-bold rounded-xl hover:bg-secondary-dark transition-all flex items-center gap-2"
+                                        >
+                                            <DollarSign size={18} />
+                                            Pay Now to Continue
+                                        </button>
+                                    </div>
                                 </div>
+                            </div>
+                        )}
 
-                                <Input
-                                    label="Job Title"
-                                    name="title"
-                                    placeholder="e.g. Senior Product Designer"
-                                    value={formData.title}
-                                    onChange={handleChange}
-                                    error={errors.title}
-                                    required
-                                    className="!text-lg font-bold"
-                                />
+                        {/* Progress Steps */}
+                        <div className="flex justify-between items-center max-w-2xl mx-auto mb-20 relative">
+                            <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 dark:bg-gray-800 -z-10 rounded-full"></div>
+                            <div
+                                className="absolute top-1/2 left-0 h-1 bg-secondary -z-0 rounded-full transition-all duration-500"
+                                style={{ width: `${((step - 1) / 2) * 100}%` }}
+                            ></div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Category</label>
-                                        <div className="relative">
-                                            <select
-                                                name="category"
-                                                value={formData.category}
+                            {[1, 2, 3].map((s) => (
+                                <div key={s} className={`relative flex flex-col items-center gap-3 ${s <= step ? 'text-secondary' : 'text-gray-400'}`}>
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-4 transition-all duration-500 ${s < step ? 'bg-secondary border-secondary text-white' :
+                                        s === step ? 'bg-white dark:bg-gray-900 border-secondary text-secondary scale-125 shadow-xl' :
+                                            'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-300'
+                                        }`}>
+                                        {s < step ? <CheckCircle2 size={16} /> : s}
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest bg-[#F8FAFC] dark:bg-gray-900 px-2">
+                                        {s === 1 ? 'Details' : s === 2 ? 'Description' : 'Compensation'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <form
+                            onSubmit={handleSubmit}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                                    e.preventDefault();
+                                }
+                            }}
+                            className="space-y-12"
+                        >
+                            {step === 1 && (
+                                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
+                                    <div className="max-w-2xl mx-auto space-y-10">
+                                        <div className="text-center mb-10">
+                                            <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Basic Information</h2>
+                                            <p className="text-gray-400 text-sm">Let's start with the core details of the position.</p>
+                                        </div>
+
+                                        <Input
+                                            label="Job Title"
+                                            name="title"
+                                            placeholder="e.g. Senior Product Designer"
+                                            value={formData.title}
+                                            onChange={handleChange}
+                                            error={errors.title}
+                                            required
+                                            className="!text-lg font-bold"
+                                        />
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Category</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="category"
+                                                        value={formData.category}
+                                                        onChange={handleChange}
+                                                        required
+                                                        className={`w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.category ? 'border-red-500' : 'border-transparent'} focus:border-secondary hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all font-bold text-primary dark:text-white appearance-none cursor-pointer outline-none`}
+                                                    >
+                                                        <option value="">Select Category</option>
+                                                        <option value="TECHNOLOGY">Technology & Software</option>
+                                                        <option value="MARKETING">Marketing & Sales</option>
+                                                        <option value="DESIGN">Creative & Design</option>
+                                                        <option value="HEALTHCARE">Healthcare & Medicine</option>
+                                                        <option value="FINANCE">Finance & Accounting</option>
+                                                        <option value="EDUCATION">Education & Training</option>
+                                                        <option value="ENGINEERING">Engineering</option>
+                                                        <option value="LOGISTICS">Logistics & Supply Chain</option>
+                                                        <option value="CUSTOMER_SERVICE">Customer Service</option>
+                                                        <option value="OTHER">Other</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
+                                                {errors.category && <p className="text-red-500 text-sm mt-1 ml-2">{errors.category}</p>}
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Workplace</label>
+                                                <div className="flex bg-gray-50 dark:bg-gray-700/30 p-1.5 rounded-2xl">
+                                                    {['ON_SITE', 'REMOTE', 'HYBRID'].map(type => (
+                                                        <button
+                                                            key={type}
+                                                            type="button"
+                                                            onClick={() => setFormData({ ...formData, workplaceType: type })}
+                                                            className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.workplaceType === type ? 'bg-white dark:bg-gray-600 text-secondary shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
+                                                        >
+                                                            {type.replace('_', ' ')}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <Input
+                                                label="Location Country"
+                                                name="country"
+                                                placeholder="e.g. Ethiopia"
+                                                value={formData.country}
                                                 onChange={handleChange}
+                                                icon={Globe}
+                                                error={errors.country}
                                                 required
-                                                className={`w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.category ? 'border-red-500' : 'border-transparent'} focus:border-secondary hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all font-bold text-primary dark:text-white appearance-none cursor-pointer outline-none`}
-                                            >
-                                                <option value="">Select Category</option>
-                                                <option value="TECHNOLOGY">Technology & Software</option>
-                                                <option value="MARKETING">Marketing & Sales</option>
-                                                <option value="DESIGN">Creative & Design</option>
-                                                <option value="HEALTHCARE">Healthcare & Medicine</option>
-                                                <option value="FINANCE">Finance & Accounting</option>
-                                                <option value="EDUCATION">Education & Training</option>
-                                                <option value="ENGINEERING">Engineering</option>
-                                                <option value="LOGISTICS">Logistics & Supply Chain</option>
-                                                <option value="CUSTOMER_SERVICE">Customer Service</option>
-                                                <option value="OTHER">Other</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
-                                            </div>
-                                        </div>
-                                        {errors.category && <p className="text-red-500 text-sm mt-1 ml-2">{errors.category}</p>}
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Workplace</label>
-                                        <div className="flex bg-gray-50 dark:bg-gray-700/30 p-1.5 rounded-2xl">
-                                            {['ON_SITE', 'REMOTE', 'HYBRID'].map(type => (
-                                                <button
-                                                    key={type}
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, workplaceType: type })}
-                                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${formData.workplaceType === type ? 'bg-white dark:bg-gray-600 text-secondary shadow-md' : 'text-gray-400 hover:text-gray-600'}`}
-                                                >
-                                                    {type.replace('_', ' ')}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <Input
-                                        label="Location Country"
-                                        name="country"
-                                        placeholder="e.g. Ethiopia"
-                                        value={formData.country}
-                                        onChange={handleChange}
-                                        icon={Globe}
-                                        error={errors.country}
-                                        required
-                                    />
-                                    <Input
-                                        label="Region / State"
-                                        name="region"
-                                        placeholder="e.g. Addis Ababa"
-                                        value={formData.region}
-                                        onChange={handleChange}
-                                        icon={MapPin}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Employment Type</label>
-                                        <div className="relative">
-                                            <select
-                                                name="jobType"
-                                                value={formData.jobType}
+                                            />
+                                            <Input
+                                                label="Region / State"
+                                                name="region"
+                                                placeholder="e.g. Addis Ababa"
+                                                value={formData.region}
                                                 onChange={handleChange}
-                                                className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all font-bold text-primary dark:text-white appearance-none cursor-pointer outline-none"
-                                            >
-                                                <option value="FULL_TIME">Full Time</option>
-                                                <option value="PART_TIME">Part Time</option>
-                                                <option value="CONTRACT">Contract</option>
-                                                <option value="FREELANCE">Freelance</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
-                                            </div>
+                                                icon={MapPin}
+                                            />
                                         </div>
-                                    </div>
-                                    <Input
-                                        label="Open Positions"
-                                        name="vacancyCount"
-                                        type="number"
-                                        value={formData.vacancyCount}
-                                        onChange={handleChange}
-                                        icon={Users}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
-                    {step === 2 && (
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
-                            <div className="max-w-2xl mx-auto space-y-10">
-                                <div className="text-center mb-10">
-                                    <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Role Details</h2>
-                                    <p className="text-gray-400 text-sm">Describe the responsibilities and requirements.</p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-4 ml-2">Description</label>
-                                    <textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        rows={12}
-                                        className={`w-full p-6 rounded-[2rem] bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.description ? 'border-red-500' : 'border-transparent'} focus:border-secondary focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-primary dark:text-white resize-none leading-relaxed`}
-                                        placeholder="Describe the role, responsibilities, and company culture..."
-                                        required
-                                    />
-                                    {errors.description && <p className="text-red-500 text-sm mt-2 ml-2">{errors.description}</p>}
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Education</label>
-                                        <div className="relative">
-                                            <select
-                                                name="educationLevel"
-                                                value={formData.educationLevel}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Employment Type</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="jobType"
+                                                        value={formData.jobType}
+                                                        onChange={handleChange}
+                                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all font-bold text-primary dark:text-white appearance-none cursor-pointer outline-none"
+                                                    >
+                                                        <option value="FULL_TIME">Full Time</option>
+                                                        <option value="PART_TIME">Part Time</option>
+                                                        <option value="CONTRACT">Contract</option>
+                                                        <option value="FREELANCE">Freelance</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <Input
+                                                label="Open Positions"
+                                                name="vacancyCount"
+                                                type="number"
+                                                value={formData.vacancyCount}
                                                 onChange={handleChange}
-                                                className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
-                                            >
-                                                <option value="NOT_SPECIFIED">Not Specified</option>
-                                                <option value="SECONDARY_SCHOOL">Secondary School</option>
-                                                <option value="TVET">TVET / Diploma</option>
-                                                <option value="BACHELORS">Bachelor's Degree</option>
-                                                <option value="MASTERS">Master's Degree</option>
-                                                <option value="PHD">PhD / Doctorate</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <Input
-                                        label="Years of Experience"
-                                        name="experienceLevel"
-                                        placeholder="e.g. 5+ years"
-                                        value={formData.experienceLevel}
-                                        onChange={handleChange}
-                                        icon={Briefcase}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Skills & Keywords</label>
-                                    <div className="p-2 bg-gray-50 dark:bg-gray-700/30 rounded-[1.5rem] border-2 border-transparent focus-within:border-secondary transition-all">
-                                        <div className="flex flex-wrap gap-2 p-2">
-                                            {tags.map(tag => (
-                                                <span key={tag} className="px-4 py-2 bg-white dark:bg-gray-800 text-secondary text-sm font-bold rounded-xl flex items-center gap-2 shadow-sm">
-                                                    {tag}
-                                                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
-                                                        <X size={14} />
-                                                    </button>
-                                                </span>
-                                            ))}
-                                            <input
-                                                type="text"
-                                                value={tagInput}
-                                                onChange={(e) => setTagInput(e.target.value)}
-                                                onKeyDown={addTag}
-                                                placeholder="Type skill & press Enter..."
-                                                className="flex-1 bg-transparent px-4 py-2 outline-none font-medium text-primary dark:text-white min-w-[150px]"
+                                                icon={Users}
                                             />
                                         </div>
                                     </div>
-                                    <p className="text-xs text-gray-400 mt-2 ml-2">Press Enter to add a tag</p>
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                            )}
 
-                    {step === 3 && (
-                        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
-                            <div className="max-w-2xl mx-auto space-y-10">
-                                <div className="text-center mb-10">
-                                    <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Compensation</h2>
-                                    <p className="text-gray-400 text-sm">Define the salary range and perks.</p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-6">
-                                    <Input
-                                        label="Minimum"
-                                        name="salaryMin"
-                                        type="number"
-                                        placeholder="0.00"
-                                        value={formData.salaryMin}
-                                        onChange={handleChange}
-                                        icon={DollarSign}
-                                    />
-                                    <Input
-                                        label="Maximum"
-                                        name="salaryMax"
-                                        type="number"
-                                        placeholder="0.00"
-                                        value={formData.salaryMax}
-                                        onChange={handleChange}
-                                        icon={DollarSign}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Frequency</label>
-                                        <div className="relative">
-                                            <select
-                                                name="compensationType"
-                                                value={formData.compensationType}
-                                                onChange={handleChange}
-                                                className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
-                                            >
-                                                <option value="MONTHLY">Monthly</option>
-                                                <option value="HOURLY">Hourly</option>
-                                                <option value="FIXED">Fixed</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
-                                            </div>
+                            {step === 2 && (
+                                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
+                                    <div className="max-w-2xl mx-auto space-y-10">
+                                        <div className="text-center mb-10">
+                                            <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Role Details</h2>
+                                            <p className="text-gray-400 text-sm">Describe the responsibilities and requirements.</p>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Currency</label>
-                                        <div className="relative">
-                                            <select
-                                                name="currency"
-                                                value={formData.currency}
-                                                onChange={handleChange}
-                                                className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
-                                            >
-                                                <option value="USD">USD ($)</option>
-                                                <option value="ETB">ETB (Br)</option>
-                                                <option value="EUR">EUR (€)</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                                    <Input
-                                        label="Closing Date"
-                                        name="deadline"
-                                        type="date"
-                                        value={formData.deadline}
-                                        onChange={handleChange}
-                                        icon={Calendar}
-                                    />
-                                    <div>
-                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Preferred Gender</label>
-                                        <div className="relative">
-                                            <select
-                                                name="genderRequirement"
-                                                value={formData.genderRequirement}
+                                        <div>
+                                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-4 ml-2">Description</label>
+                                            <textarea
+                                                name="description"
+                                                value={formData.description}
                                                 onChange={handleChange}
-                                                className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
-                                            >
-                                                <option value="ANY">Any</option>
-                                                <option value="MALE">Male</option>
-                                                <option value="FEMALE">Female</option>
-                                            </select>
-                                            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                                <ChevronRight className="rotate-90" size={16} />
+                                                rows={12}
+                                                className={`w-full p-6 rounded-[2rem] bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.description ? 'border-red-500' : 'border-transparent'} focus:border-secondary focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-primary dark:text-white resize-none leading-relaxed`}
+                                                placeholder="Describe the role, responsibilities, and company culture..."
+                                                required
+                                            />
+                                            {errors.description && <p className="text-red-500 text-sm mt-2 ml-2">{errors.description}</p>}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Education</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="educationLevel"
+                                                        value={formData.educationLevel}
+                                                        onChange={handleChange}
+                                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
+                                                    >
+                                                        <option value="NOT_SPECIFIED">Not Specified</option>
+                                                        <option value="SECONDARY_SCHOOL">Secondary School</option>
+                                                        <option value="TVET">TVET / Diploma</option>
+                                                        <option value="BACHELORS">Bachelor's Degree</option>
+                                                        <option value="MASTERS">Master's Degree</option>
+                                                        <option value="PHD">PhD / Doctorate</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
                                             </div>
+                                            <Input
+                                                label="Years of Experience"
+                                                name="experienceLevel"
+                                                placeholder="e.g. 5+ years"
+                                                value={formData.experienceLevel}
+                                                onChange={handleChange}
+                                                icon={Briefcase}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Skills & Keywords</label>
+                                            <div className="p-2 bg-gray-50 dark:bg-gray-700/30 rounded-[1.5rem] border-2 border-transparent focus-within:border-secondary transition-all">
+                                                <div className="flex flex-wrap gap-2 p-2">
+                                                    {tags.map(tag => (
+                                                        <span key={tag} className="px-4 py-2 bg-white dark:bg-gray-800 text-secondary text-sm font-bold rounded-xl flex items-center gap-2 shadow-sm">
+                                                            {tag}
+                                                            <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
+                                                                <X size={14} />
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                    <input
+                                                        type="text"
+                                                        value={tagInput}
+                                                        onChange={(e) => setTagInput(e.target.value)}
+                                                        onKeyDown={addTag}
+                                                        placeholder="Type skill & press Enter..."
+                                                        className="flex-1 bg-transparent px-4 py-2 outline-none font-medium text-primary dark:text-white min-w-[150px]"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-2 ml-2">Press Enter to add a tag</p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                            )}
 
-                    {/* Footer Actions */}
-                    <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 p-6 z-40">
-                        <div className="max-w-4xl mx-auto flex justify-between items-center">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                size="lg"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    if (step > 1) prevStep();
-                                    else navigate('/jobs/manage');
-                                }}
-                                className="text-gray-500 hover:text-primary dark:hover:text-white"
-                            >
-                                {step === 1 ? 'Cancel' : 'Back'}
-                            </Button>
+                            {step === 3 && (
+                                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 lg:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-100 dark:border-gray-700 animate-fade-in-up">
+                                    <div className="max-w-2xl mx-auto space-y-10">
+                                        <div className="text-center mb-10">
+                                            <h2 className="text-2xl font-bold text-primary dark:text-white mb-2">Compensation</h2>
+                                            <p className="text-gray-400 text-sm">Define the salary range and perks.</p>
+                                        </div>
 
-                            <div className="flex gap-4">
-                                {step < 3 ? (
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <Input
+                                                label="Minimum"
+                                                name="salaryMin"
+                                                type="number"
+                                                placeholder="0.00"
+                                                value={formData.salaryMin}
+                                                onChange={handleChange}
+                                                icon={DollarSign}
+                                            />
+                                            <Input
+                                                label="Maximum"
+                                                name="salaryMax"
+                                                type="number"
+                                                placeholder="0.00"
+                                                value={formData.salaryMax}
+                                                onChange={handleChange}
+                                                icon={DollarSign}
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Frequency</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="compensationType"
+                                                        value={formData.compensationType}
+                                                        onChange={handleChange}
+                                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
+                                                    >
+                                                        <option value="MONTHLY">Monthly</option>
+                                                        <option value="HOURLY">Hourly</option>
+                                                        <option value="FIXED">Fixed</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Currency</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="currency"
+                                                        value={formData.currency}
+                                                        onChange={handleChange}
+                                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
+                                                    >
+                                                        <option value="USD">USD ($)</option>
+                                                        <option value="ETB">ETB (Br)</option>
+                                                        <option value="EUR">EUR (€)</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                                            <Input
+                                                label="Closing Date"
+                                                name="deadline"
+                                                type="date"
+                                                value={formData.deadline}
+                                                onChange={handleChange}
+                                                icon={Calendar}
+                                            />
+                                            <div>
+                                                <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Preferred Gender</label>
+                                                <div className="relative">
+                                                    <select
+                                                        name="genderRequirement"
+                                                        value={formData.genderRequirement}
+                                                        onChange={handleChange}
+                                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
+                                                    >
+                                                        <option value="ANY">Any</option>
+                                                        <option value="MALE">Male</option>
+                                                        <option value="FEMALE">Female</option>
+                                                    </select>
+                                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                                        <ChevronRight className="rotate-90" size={16} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Footer Actions */}
+                            <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 p-6 z-40">
+                                <div className="max-w-4xl mx-auto flex justify-between items-center">
                                     <Button
                                         type="button"
-                                        variant="primary"
+                                        variant="ghost"
                                         size="lg"
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            nextStep();
+                                            if (step > 1) prevStep();
+                                            else navigate('/jobs/manage');
                                         }}
-                                        className="shadow-xl shadow-secondary/30 rounded-xl px-12"
+                                        className="text-gray-500 hover:text-primary dark:hover:text-white"
                                     >
-                                        Next Step
+                                        {step === 1 ? 'Cancel' : 'Back'}
                                     </Button>
-                                ) : (
-                                    <Button
-                                        variant="secondary"
-                                        size="lg"
-                                        type="submit"
-                                        loading={loading}
-                                        className="shadow-xl shadow-secondary/30 rounded-xl px-12"
-                                    >
-                                        Post Job Now
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Spacer for fixed footer */}
-                    <div className="h-24"></div>
-                </form>
+                                    <div className="flex gap-4">
+                                        {step < 3 ? (
+                                            <Button
+                                                type="button"
+                                                variant="primary"
+                                                size="lg"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    nextStep();
+                                                }}
+                                                className="shadow-xl shadow-secondary/30 rounded-xl px-12"
+                                            >
+                                                Next Step
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="secondary"
+                                                size="lg"
+                                                type="submit"
+                                                loading={loading}
+                                                className="shadow-xl shadow-secondary/30 rounded-xl px-12"
+                                            >
+                                                Post Job Now
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Spacer for fixed footer */}
+                            <div className="h-24"></div>
+                        </form>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -117,7 +117,7 @@ const Navbar = () => {
                   onMouseEnter={() => setActiveDropdown('opps')}
                   className={navLinkClass()}
                 >
-                  Find Work <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === 'opps' ? 'rotate-180' : ''}`} />
+                  Find Work <ChevronDown size={14} className={`text-secondary transition-transform duration-300 ${activeDropdown === 'opps' ? 'rotate-180' : ''}`} />
                 </button>
                 {activeDropdown === 'opps' && (
                   <div
@@ -138,7 +138,7 @@ const Navbar = () => {
                   onMouseEnter={() => setActiveDropdown('hiring')}
                   className={navLinkClass()}
                 >
-                  For Hiring <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === 'hiring' ? 'rotate-180' : ''}`} />
+                  For Hiring <ChevronDown size={14} className={`text-secondary transition-transform duration-300 ${activeDropdown === 'hiring' ? 'rotate-180' : ''}`} />
                 </button>
                 {activeDropdown === 'hiring' && (
                   <div
@@ -152,15 +152,19 @@ const Navbar = () => {
                 )}
               </div>
 
-              <Link to="/resources" className={navLinkClass()}>
-                Resources
-              </Link>
+              <a href="#how-it-works" className={navLinkClass()}>
+                How it works
+              </a>
+
+              <a href="#contact" className={navLinkClass()}>
+                Contact
+              </a>
             </div>
 
             <div className="flex items-center space-x-6">
               <button
                 onClick={toggleTheme}
-                className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 transition-all active:scale-95"
+                className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-secondary transition-all active:scale-95"
               >
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
@@ -169,7 +173,7 @@ const Navbar = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowNotifications(!showNotifications)}
-                    className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 transition-all active:scale-95 relative"
+                    className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/5 text-secondary transition-all active:scale-95 relative"
                   >
                     <Bell size={20} />
                     {unreadCount > 0 && (
@@ -212,7 +216,7 @@ const Navbar = () => {
                         <span>{user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}</span>
                       )}
                     </div>
-                    <ChevronDown size={16} className={`text-gray-400 transition-transform duration-300 ${activeDropdown === 'user' ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={16} className={`text-secondary transition-transform duration-300 ${activeDropdown === 'user' ? 'rotate-180' : ''}`} />
                   </button>
 
                   {activeDropdown === 'user' && (

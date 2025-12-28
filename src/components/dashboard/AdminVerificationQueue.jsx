@@ -11,10 +11,12 @@ import {
     Loader2,
     Eye,
     X,
-    MessageSquare
+    MessageSquare,
+    FileText
 } from 'lucide-react';
 import verificationService from '../../services/verificationService';
 import useNotificationStore from '../../store/notificationStore';
+import PdfViewerModal from '../modals/PdfViewerModal';
 
 const AdminVerificationQueue = () => {
     const [verifications, setVerifications] = useState([]);
@@ -23,8 +25,9 @@ const AdminVerificationQueue = () => {
     const [rejectionReason, setRejectionReason] = useState('');
     const [isReviewing, setIsReviewing] = useState(false);
     const [viewMode, setViewMode] = useState('PENDING'); // 'PENDING' or 'HISTORY'
-    const { addNotification } = useNotificationStore();
+    const addNotification = useNotificationStore(state => state.addLocalNotification);
     const prevCountRef = useRef(0);
+    const [userPdfPreview, setUserPdfPreview] = useState(null);
 
     const fetchVerifications = async (showLoading = false) => {
         if (showLoading) setIsLoading(true);
@@ -34,6 +37,9 @@ const AdminVerificationQueue = () => {
                 : await verificationService.getAllVerifications();
 
             const data = response.data || [];
+
+            // Sort by submittedAt DESC (newest first)
+            data.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
             // If new verifications arrived, notify the admin locally
             if (data.length > prevCountRef.current) {
@@ -231,18 +237,30 @@ const AdminVerificationQueue = () => {
 
                             <div className="mb-8">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-2">Compliance Document</p>
-                                <a
-                                    href={selectedVerification.tradeLicenseUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="block p-8 border-2 border-dashed border-secondary/30 bg-secondary/5 rounded-3xl hover:bg-secondary/10 transition-all group text-center"
+                                <button
+                                    onClick={() => setUserPdfPreview({ url: selectedVerification.tradeLicenseUrl, title: selectedVerification.companyName + ' - Trade License' })}
+                                    className="w-full text-left group"
                                 >
-                                    <div className="w-16 h-16 bg-white dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                        <ShieldCheck className="text-secondary" size={32} />
+                                    <div className="rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden bg-gray-50 dark:bg-black/20 h-[200px] relative transition-all group-hover:border-secondary/30 group-hover:shadow-lg group-hover:shadow-secondary/5">
+                                        {/* Mock Preview Background */}
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-50 group-hover:opacity-40 transition-opacity">
+                                            <FileText size={64} className="text-gray-300 dark:text-gray-600 mb-4" />
+                                            <p className="text-sm font-bold text-gray-400">PDF PREVIEW NOT AVAILABLE INLINE</p>
+                                        </div>
+
+                                        {/* Hover Overlay */}
+                                        <div className="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/5 transition-colors flex items-center justify-center">
+                                            <div className="px-6 py-3 bg-white dark:bg-[#151C26] rounded-2xl shadow-xl transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 flex items-center gap-3 border border-gray-100 dark:border-white/10">
+                                                <Eye className="text-secondary" size={20} />
+                                                <span className="font-bold text-primary dark:text-white text-sm">Open Full Preview</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest">
+                                            PDF
+                                        </div>
                                     </div>
-                                    <p className="font-black text-primary dark:text-white uppercase tracking-widest text-xs">View Trade License Document</p>
-                                    <p className="text-[10px] text-gray-400 mt-1">Stored securely on Cloudinary CDN</p>
-                                </a>
+                                </button>
                             </div>
 
                             <div className="space-y-3 mb-10">
@@ -285,6 +303,14 @@ const AdminVerificationQueue = () => {
                         </div>
                     </div>
                 </div>
+            )}
+            {userPdfPreview && (
+                <PdfViewerModal
+                    isOpen={!!userPdfPreview}
+                    onClose={() => setUserPdfPreview(null)}
+                    pdfUrl={userPdfPreview.url}
+                    title={userPdfPreview.title}
+                />
             )}
         </div>
     );
