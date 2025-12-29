@@ -398,3 +398,17 @@ export const getFullProfile = async (seekerId) => {
         return { success: false, error: error.response?.data || { message: 'Failed to fetch full seeker profile' } };
     }
 };
+
+/**
+ * Search seekers (for discovery)
+ */
+export const searchSeekers = async (query = '', page = 0, size = 20) => {
+    try {
+        const response = await api.get('api/v1/seekers/profile', {
+            params: { query, page, size }
+        });
+        return { success: true, data: response.data };
+    } catch (error) {
+        return { success: false, error: error.response?.data || { message: 'Failed to search seekers' } };
+    }
+};

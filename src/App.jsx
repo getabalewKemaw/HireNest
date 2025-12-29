@@ -36,6 +36,7 @@ import PlaceholderPage from './pages/PlaceholderPage';
 import PostJobPage from './pages/employer/PostJobPage';
 import CompanyProfilePage from './pages/employer/CompanyProfilePage';
 import ManageJobsPage from './pages/employer/ManageJobsPage';
+import TalentPage from './pages/employer/TalentPage';
 import ApplicantsPage from './pages/employer/ApplicantsPage';
 import CompanyVerificationPage from './pages/employer/CompanyVerificationPage';
 
@@ -159,6 +160,7 @@ function AppContent() {
           <Route path="/post-job" element={<ProtectedRoute allowedRoles="EMPLOYER"><PostJobPage /></ProtectedRoute>} />
           <Route path="/employer/profile" element={<ProtectedRoute allowedRoles="EMPLOYER"><DashboardLayout><CompanyProfilePage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/jobs/manage" element={<ProtectedRoute allowedRoles="EMPLOYER"><ManageJobsPage /></ProtectedRoute>} />
+          <Route path="/talent" element={<ProtectedRoute allowedRoles="EMPLOYER"><DashboardLayout><TalentPage /></DashboardLayout></ProtectedRoute>} />
           <Route path="/applicants" element={<ProtectedRoute allowedRoles="EMPLOYER"><ApplicantsPage /></ProtectedRoute>} />
           <Route path="/employer/verify" element={<ProtectedRoute allowedRoles="EMPLOYER"><><CompanyVerificationPage /></></ProtectedRoute>} />
 

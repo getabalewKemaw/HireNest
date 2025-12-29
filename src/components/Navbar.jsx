@@ -27,7 +27,7 @@ import NotificationPanel from './NotificationPanel';
 
 /**
  * Navigation Bar Component
- * Redesigned for a professional SaaS feel with dropdowns and user profiles
+
  */
 const Navbar = () => {
   const navigate = useNavigate();
@@ -127,7 +127,6 @@ const Navbar = () => {
                     <Link to="/jobs" className={dropdownItemClass}><Search size={18} /> Browse All Jobs</Link>
                     <Link to="/jobs/recommended" className={dropdownItemClass}><Zap size={18} /> Recommended for You</Link>
                     <Link to="/saved" className={dropdownItemClass}><Bookmark size={18} /> Saved Jobs</Link>
-                    <Link to="/categories" className={dropdownItemClass}><Globe size={18} /> Job Categories</Link>
                   </div>
                 )}
               </div>
@@ -145,9 +144,7 @@ const Navbar = () => {
                     onMouseLeave={() => setActiveDropdown(null)}
                     className="absolute top-full left-0 mt-4 w-64 bg-white dark:bg-[#0F2439] rounded-[2rem] shadow-2xl border border-gray-100 dark:border-white/5 p-3 animate-fade-in"
                   >
-                    <Link to="/talent" className={dropdownItemClass}><Users size={18} /> Discover Talent</Link>
                     <Link to="/post-job" className={dropdownItemClass}><Briefcase size={18} /> Post a Job</Link>
-                    <Link to="/enterprise" className={dropdownItemClass}><ShieldCheck size={18} /> Etworks Enterprise</Link>
                   </div>
                 )}
               </div>
@@ -159,6 +156,8 @@ const Navbar = () => {
               <a href="#contact" className={navLinkClass()}>
                 Contact
               </a>
+
+          
             </div>
 
             <div className="flex items-center space-x-6">
@@ -240,9 +239,7 @@ const Navbar = () => {
                             <Bookmark size={18} /> Saved Jobs
                           </Link>
                         )}
-                        <Link to="/settings" className={dropdownItemClass} onClick={() => setActiveDropdown(null)}>
-                          <Settings size={18} /> Settings
-                        </Link>
+                   
                       </div>
 
                       <div className="h-px bg-gray-100 dark:bg-white/5 my-3 mx-2"></div>

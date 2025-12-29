@@ -34,6 +34,28 @@ const CompanyVerificationWidget = ({ inline = false }) => {
         website: '',
         tradeLicense: null
     });
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [touched, setTouched] = useState({});
+
+    const validateField = (name, value) => {
+        let err = null;
+        if (name === 'companyName' && !value.trim()) err = 'Company name is required';
+        if (name === 'website' && value && !value.startsWith('http')) err = 'Website must start with http:// or https://';
+        setFieldErrors(prev => ({ ...prev, [name]: err }));
+        return !err;
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (touched[name]) validateField(name, value);
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        setTouched(prev => ({ ...prev, [name]: true }));
+        validateField(name, value);
+    };
 
     useEffect(() => {
         fetchStatus();
@@ -46,7 +68,7 @@ const CompanyVerificationWidget = ({ inline = false }) => {
                 setVerificationData(response.data);
                 setStatus(response.data.status);
 
-             
+
             }
         } catch (err) {
             if (err.response?.status === 404) {
@@ -154,13 +176,16 @@ const CompanyVerificationWidget = ({ inline = false }) => {
                     <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                     <input
                         required
+                        name="companyName"
                         type="text"
                         placeholder="e.g. Acme Corp LLC"
-                        className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:bg-white dark:focus:bg-[#151C26] focus:border-secondary transition-all font-medium"
+                        className={`w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border ${fieldErrors.companyName ? 'border-red-500' : 'border-transparent dark:border-white/10'} rounded-2xl focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:bg-white dark:focus:bg-[#151C26] focus:border-secondary transition-all font-medium`}
                         value={formData.companyName}
-                        onChange={e => setFormData({ ...formData, companyName: e.target.value })}
+                        onChange={handleInputChange}
+                        onBlur={handleBlur}
                     />
                 </div>
+                {fieldErrors.companyName && <p className="text-red-500 text-[10px] font-bold mt-1 ml-4">{fieldErrors.companyName}</p>}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -169,11 +194,13 @@ const CompanyVerificationWidget = ({ inline = false }) => {
                     <div className="relative">
                         <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                         <input
+                            name="tinNumber"
                             type="text"
                             placeholder="Tax ID"
                             className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:bg-white dark:focus:bg-[#151C26] focus:border-secondary transition-all font-medium"
                             value={formData.tinNumber}
-                            onChange={e => setFormData({ ...formData, tinNumber: e.target.value })}
+                            onChange={handleInputChange}
+                            onBlur={handleBlur}
                         />
                     </div>
                 </div>
@@ -182,13 +209,16 @@ const CompanyVerificationWidget = ({ inline = false }) => {
                     <div className="relative">
                         <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
                         <input
+                            name="website"
                             type="url"
                             placeholder="https://..."
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/10 rounded-2xl focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:bg-white dark:focus:bg-[#151C26] focus:border-secondary transition-all font-medium"
+                            className={`w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border ${fieldErrors.website ? 'border-red-500' : 'border-transparent dark:border-white/10'} rounded-2xl focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:bg-white dark:focus:bg-[#151C26] focus:border-secondary transition-all font-medium`}
                             value={formData.website}
-                            onChange={e => setFormData({ ...formData, website: e.target.value })}
+                            onChange={handleInputChange}
+                            onBlur={handleBlur}
                         />
                     </div>
+                    {fieldErrors.website && <p className="text-red-500 text-[10px] font-bold mt-1 ml-4">{fieldErrors.website}</p>}
                 </div>
             </div>
 

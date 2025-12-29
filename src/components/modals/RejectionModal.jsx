@@ -8,17 +8,39 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, applicantName }) => {
 
     if (!isOpen) return null;
 
+    const [error, setError] = useState(null);
+
+    const validate = (value) => {
+        let err = null;
+        if (!value.trim()) err = 'Rejection reason is required';
+        else if (value.trim().length < 10) err = 'Please provide a more detailed reason (min 10 characters)';
+        setError(err);
+        return !err;
+    };
+
+    const handleReasonChange = (e) => {
+        const value = e.target.value;
+        setReason(value);
+        if (error) validate(value);
+    };
+
+    const handleBlur = () => {
+        validate(reason);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!reason.trim()) return;
+        if (!validate(reason)) return;
 
         setIsLoading(true);
         try {
             await onConfirm(reason);
             setReason('');
+            setError(null);
             onClose();
-        } catch (error) {
-            console.error('Error in rejection:', error);
+        } catch (err) {
+            console.error('Error in rejection:', err);
+            setError('Failed to process rejection. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -58,11 +80,13 @@ const RejectionModal = ({ isOpen, onClose, onConfirm, applicantName }) => {
                             </label>
                             <textarea
                                 value={reason}
-                                onChange={(e) => setReason(e.target.value)}
+                                onChange={handleReasonChange}
+                                onBlur={handleBlur}
                                 placeholder="Please provide specific feedback to help the candidate improve..."
-                                className="w-full min-h-[150px] p-6 bg-gray-50 dark:bg-gray-800 border-2 border-transparent focus:border-red-500/30 rounded-3xl outline-none text-primary dark:text-white transition-all shadow-inner resize-none font-heading leading-relaxed"
+                                className={`w-full min-h-[150px] p-6 bg-gray-50 dark:bg-gray-800 border-2 ${error ? 'border-red-500/50' : 'border-transparent'} focus:border-red-500/30 rounded-3xl outline-none text-primary dark:text-white transition-all shadow-inner resize-none font-heading leading-relaxed`}
                                 required
                             />
+                            {error && <p className="text-red-500 text-xs font-bold mt-1 ml-2">{error}</p>}
                         </div>
 
                         <div className="flex items-center gap-4 text-xs text-gray-400 italic bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-2xl">

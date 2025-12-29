@@ -75,8 +75,47 @@ const JobDetailPage = () => {
         setShowApplyModal(true);
     };
 
+    const [errors, setErrors] = useState({});
+
+    const validateField = (name, value) => {
+        let error = null;
+        if (name === 'coverLetter' && !value.trim()) {
+            error = 'Cover letter is required';
+        }
+        if (name === 'expectedSalary') {
+            if (!value) {
+                error = 'Expected salary is required';
+            } else if (Number(value) < 0) {
+                error = 'Salary cannot be negative';
+            } else if (Number(value) === 0) {
+                error = 'Salary must be greater than 0';
+            }
+        }
+        setErrors(prev => ({ ...prev, [name]: error }));
+        return !error;
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            validateField(name, value);
+        }
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateField(name, value);
+    };
+
     const handleApply = async (e) => {
         e.preventDefault();
+
+        // Validate all fields
+        const isCoverLetterValid = validateField('coverLetter', formData.coverLetter);
+        const isSalaryValid = validateField('expectedSalary', formData.expectedSalary);
+        if (!isCoverLetterValid || !isSalaryValid) return;
+
         setApplying(true);
         setError('');
         try {
@@ -178,11 +217,24 @@ const JobDetailPage = () => {
                                             <span className="font-bold border-b border-transparent group-hover/company:border-secondary transition-colors text-gray-700 dark:text-gray-300">
                                                 {job.companyName}
                                             </span>
-                                            <span className="text-gray-300">•</span>
-                                            <div className="flex items-center gap-1 text-emerald-500 bg-emerald-50 dark:bg-emerald-900/10 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide">
-                                                <ShieldCheck size={12} />
-                                                Verified
-                                            </div>
+                                            {job.companyVerified && (
+                                                <>
+                                                    <span className="text-gray-300">•</span>
+                                                    <div className="flex items-center gap-1 text-emerald-500 bg-emerald-50 dark:bg-emerald-900/10 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                                        <ShieldCheck size={12} />
+                                                        Verified
+                                                    </div>
+                                                </>
+                                            )}
+                                            {job.paymentVerified && (
+                                                <>
+                                                    <span className="text-gray-300">•</span>
+                                                    <div className="flex items-center gap-1 text-secondary bg-secondary/10 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                                        <Star size={12} className="fill-secondary text-secondary" />
+                                                        Payment Verified
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -226,9 +278,11 @@ const JobDetailPage = () => {
                                         Salary
                                     </span>
                                     <div className="flex items-center gap-2 text-primary dark:text-white font-bold text-sm">
-                                        <DollarSign size={16} className="text-secondary shrink-0" />
+                                        <div className="text-[10px] font-black text-secondary px-1.5 py-0.5 rounded bg-secondary/10 border border-secondary/20">
+                                            {job.currency || 'USD'}
+                                        </div>
                                         <span className="truncate">
-                                            {job.salaryMin ? `${job.currency || '$'}${job.salaryMin.toLocaleString()}` : 'Negotiable'}
+                                            {job.salaryMin ? `${job.salaryMin.toLocaleString()} - ${job.salaryMax?.toLocaleString()}` : 'Negotiable'}
                                         </span>
                                     </div>
                                 </div>
@@ -412,24 +466,31 @@ const JobDetailPage = () => {
                                 <div>
                                     <label className="block text-xs font-black uppercase tracking-widest text-primary dark:text-gray-300 mb-4">Cover Letter (Required)</label>
                                     <textarea
+                                        name="coverLetter"
                                         required
                                         maxLength={10000}
                                         value={formData.coverLetter}
-                                        onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
+                                        onChange={handleInputChange}
+                                        onBlur={handleBlur}
                                         placeholder="Tell the employer why you're a great fit..."
-                                        className="w-full h-48 p-6 rounded-[2rem] bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600 focus:ring-2 focus:ring-secondary/20 transition-all font-heading text-primary dark:text-white resize-none"
+                                        className={`w-full h-48 p-6 rounded-[2rem] bg-gray-50 dark:bg-gray-700/50 border ${errors.coverLetter ? 'border-red-500' : 'border-gray-100 dark:border-gray-600'} focus:ring-2 focus:ring-secondary/20 transition-all font-heading text-primary dark:text-white resize-none`}
                                     />
+                                    {errors.coverLetter && <p className="mt-2 text-xs text-red-500 font-bold">{errors.coverLetter}</p>}
                                     <div className="text-right text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">
                                         {formData.coverLetter.length} / 10,000 characters
                                     </div>
                                 </div>
 
                                 <Input
-                                    label="Expected Salary (Monthly / USD)"
+                                    label={`Expected Salary (Monthly / ${job.currency || 'USD'})`}
+                                    name="expectedSalary"
                                     placeholder="e.g. 5000"
                                     type="number"
+                                    min="0"
                                     value={formData.expectedSalary}
-                                    onChange={(e) => setFormData({ ...formData, expectedSalary: e.target.value })}
+                                    onChange={handleInputChange}
+                                    onBlur={handleBlur}
+                                    error={errors.expectedSalary}
                                 />
 
                                 <div className="flex gap-4 pt-4">

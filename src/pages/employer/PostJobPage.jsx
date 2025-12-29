@@ -94,12 +94,38 @@ const PostJobPage = () => {
         }
     };
 
+    const validateField = (name, value) => {
+        let error = null;
+        if (name === 'title' && !value.trim()) error = 'Job title is required';
+        if (name === 'category' && !value) error = 'Please select a category';
+        if (name === 'country' && !value.trim()) error = 'Country is required';
+        if (name === 'region' && !value.trim()) error = 'Region/State is required';
+        if (name === 'vacancyCount' && (!value || value <= 0)) error = 'Open positions must be at least 1';
+        if (name === 'description') {
+            if (!value.trim()) error = 'Job description is required';
+            else if (value.length < 50) error = 'Description must be at least 50 characters';
+        }
+        if (name === 'experienceLevel' && !value.trim()) error = 'Experience level is required';
+        if (name === 'salaryMin' && (!value || value < 0)) error = 'Min salary cannot be negative';
+        if (name === 'salaryMax' && (!value || value < 0)) error = 'Max salary cannot be negative';
+        if (name === 'deadline' && !value) error = 'Closing date is required';
+
+        setErrors(prev => ({ ...prev, [name]: error }));
+        return !error;
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        // Live validation for description while typing if it already has an error
         if (errors[name]) {
-            setErrors({ ...errors, [name]: null });
+            validateField(name, value);
         }
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        validateField(name, value);
     };
 
     const addTag = (e) => {
@@ -168,11 +194,21 @@ const PostJobPage = () => {
             if (!formData.title.trim()) newErrors.title = 'Job title is required';
             if (!formData.category) newErrors.category = 'Please select a category';
             if (!formData.country.trim()) newErrors.country = 'Country is required';
+            if (!formData.region.trim()) newErrors.region = 'Region/State is required';
+            if (!formData.vacancyCount || formData.vacancyCount <= 0) newErrors.vacancyCount = 'Open positions must be at least 1';
         }
 
         if (step === 2) {
             if (!formData.description.trim()) newErrors.description = 'Job description is required';
             else if (formData.description.length < 50) newErrors.description = 'Description must be at least 50 characters';
+            if (!formData.experienceLevel.trim()) newErrors.experienceLevel = 'Experience level is required';
+        }
+
+        if (step === 3) {
+            if (!formData.salaryMin || formData.salaryMin < 0) newErrors.salaryMin = 'Valid min salary is required';
+            if (!formData.salaryMax || formData.salaryMax < 0) newErrors.salaryMax = 'Valid max salary is required';
+            if (Number(formData.salaryMin) > Number(formData.salaryMax)) newErrors.salaryMax = 'Max salary must be greater than min';
+            if (!formData.deadline) newErrors.deadline = 'Closing date is required';
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -331,6 +367,7 @@ const PostJobPage = () => {
                                             placeholder="e.g. Senior Product Designer"
                                             value={formData.title}
                                             onChange={handleChange}
+                                            onBlur={handleBlur}
                                             error={errors.title}
                                             required
                                             className="!text-lg font-bold"
@@ -344,6 +381,7 @@ const PostJobPage = () => {
                                                         name="category"
                                                         value={formData.category}
                                                         onChange={handleChange}
+                                                        onBlur={handleBlur}
                                                         required
                                                         className={`w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.category ? 'border-red-500' : 'border-transparent'} focus:border-secondary hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all font-bold text-primary dark:text-white appearance-none cursor-pointer outline-none`}
                                                     >
@@ -389,6 +427,7 @@ const PostJobPage = () => {
                                                 placeholder="e.g. Ethiopia"
                                                 value={formData.country}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 icon={Globe}
                                                 error={errors.country}
                                                 required
@@ -399,7 +438,10 @@ const PostJobPage = () => {
                                                 placeholder="e.g. Addis Ababa"
                                                 value={formData.region}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 icon={MapPin}
+                                                error={errors.region}
+                                                required
                                             />
                                         </div>
 
@@ -427,9 +469,13 @@ const PostJobPage = () => {
                                                 label="Open Positions"
                                                 name="vacancyCount"
                                                 type="number"
+                                                min="1"
                                                 value={formData.vacancyCount}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.vacancyCount}
                                                 icon={Users}
+                                                required
                                             />
                                         </div>
                                     </div>
@@ -450,6 +496,7 @@ const PostJobPage = () => {
                                                 name="description"
                                                 value={formData.description}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
                                                 rows={12}
                                                 className={`w-full p-6 rounded-[2rem] bg-gray-50 dark:bg-gray-700/30 border-2 ${errors.description ? 'border-red-500' : 'border-transparent'} focus:border-secondary focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-primary dark:text-white resize-none leading-relaxed`}
                                                 placeholder="Describe the role, responsibilities, and company culture..."
@@ -466,6 +513,7 @@ const PostJobPage = () => {
                                                         name="educationLevel"
                                                         value={formData.educationLevel}
                                                         onChange={handleChange}
+                                                        onBlur={handleBlur}
                                                         className="w-full px-6 py-4 rounded-2xl bg-gray-50 dark:bg-gray-700/30 border-2 border-transparent focus:border-secondary transition-all font-bold text-primary dark:text-white appearance-none outline-none"
                                                     >
                                                         <option value="NOT_SPECIFIED">Not Specified</option>
@@ -486,7 +534,10 @@ const PostJobPage = () => {
                                                 placeholder="e.g. 5+ years"
                                                 value={formData.experienceLevel}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.experienceLevel}
                                                 icon={Briefcase}
+                                                required
                                             />
                                         </div>
 
@@ -531,19 +582,27 @@ const PostJobPage = () => {
                                                 label="Minimum"
                                                 name="salaryMin"
                                                 type="number"
+                                                min="0"
                                                 placeholder="0.00"
                                                 value={formData.salaryMin}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.salaryMin}
                                                 icon={DollarSign}
+                                                required
                                             />
                                             <Input
                                                 label="Maximum"
                                                 name="salaryMax"
                                                 type="number"
+                                                min="0"
                                                 placeholder="0.00"
                                                 value={formData.salaryMax}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.salaryMax}
                                                 icon={DollarSign}
+                                                required
                                             />
                                         </div>
 
@@ -593,7 +652,10 @@ const PostJobPage = () => {
                                                 type="date"
                                                 value={formData.deadline}
                                                 onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                error={errors.deadline}
                                                 icon={Calendar}
+                                                required
                                             />
                                             <div>
                                                 <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-3 ml-2">Preferred Gender</label>

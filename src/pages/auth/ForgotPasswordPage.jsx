@@ -7,16 +7,39 @@ import * as authService from '../../services/authService';
 import AuthLayout from '../../components/AuthLayout';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import { validateEmail } from '../../utils/validation';
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isSent, setIsSent] = useState(false);
     const [error, setError] = useState(null);
+    const [fieldError, setFieldError] = useState(null);
+    const [touched, setTouched] = useState(false);
     const navigate = useNavigate();
+
+    const validate = (value) => {
+        const err = validateEmail(value);
+        setFieldError(err);
+        return !err;
+    };
+
+    const handleChange = (e) => {
+        const val = e.target.value;
+        setEmail(val);
+        if (touched) validate(val);
+    };
+
+    const handleBlur = () => {
+        setTouched(true);
+        validate(email);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setTouched(true);
+        if (!validate(email)) return;
+
         setIsLoading(true);
         setError(null);
         try {
@@ -61,7 +84,9 @@ const ForgotPasswordPage = () => {
                     icon={Mail}
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={touched ? fieldError : null}
                     placeholder="you@example.com"
                 />
 

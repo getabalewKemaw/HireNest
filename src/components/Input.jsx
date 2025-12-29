@@ -27,7 +27,7 @@ const Input = ({
   const inputType = isPasswordType && showPassword ? 'text' : type;
 
   // Dynamic border color based on state
-  let borderColor = 'border-gray-300';
+  let borderColor = 'border-gray-500';
   if (error) borderColor = 'border-red-500';
   else if (focused) borderColor = 'border-primary';
 

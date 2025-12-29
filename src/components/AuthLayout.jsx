@@ -6,7 +6,7 @@ import { ChevronLeft, Home } from 'lucide-react';
  * Authentication Layout
  * Wraps auth pages with a consistent professional design.
  */
-const AuthLayout = ({ children, title, subtitle, backButton = false }) => {
+const AuthLayout = ({ children, title, subtitle, backButton = true }) => {
     const navigate = useNavigate();
 
     return (
