@@ -8,9 +8,7 @@ import { validateEmail, validateRequired } from '../../utils/validation';
 import { ROUTES, ALERT_TYPES } from '../../config/constants';
 import useAuthStore from '../../store/authStore';
 
-/**
- * Login Form Component
- */
+
 const LoginForm = () => {
   const navigate = useNavigate();
   const { setUser } = useAuthStore();
