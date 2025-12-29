@@ -2,15 +2,6 @@ import { Navigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { ROUTES } from '../config/constants';
 
-/**
- * Protected Route Component
- * Redirects to login if not authenticated
- * Optionally checks for specific roles
- * 
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components
- * @param {string|string[]} props.allowedRoles - Allowed user roles
- */
 const ProtectedRoute = ({ children, allowedRoles = null }) => {
   const { isAuthenticated, user } = useAuthStore();
   

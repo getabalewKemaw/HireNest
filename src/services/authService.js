@@ -65,14 +65,14 @@ export const logout = async () => {
     try {
       await api.post('/api/v1/auth/logout');
     } catch (e) {
-      console.warn('Regular logout failed or already logged out');
+      console.warn('Regular logout failed or already logged out'+ e.message);
     }
 
     // 2. Try admin logout
     try {
       await api.post('/api/v1/admin/auth/logout');
     } catch (e) {
-      console.warn('Admin logout failed or already logged out');
+      console.warn('Admin logout failed or already logged out' + e.message);
     }
 
     clearAccessToken();

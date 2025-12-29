@@ -92,7 +92,7 @@ const JobBoardPage = () => {
 
                 {/* Sidebar Filters */}
                 <aside className={`
-                    fixed lg:sticky top-0 lg:top-28 left-0 bottom-0 w-[280px] lg:w-[300px] bg-white dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent
+                    fixed lg:sticky top-0 lg:top-28 left-0 bottom-0 w-[280px] lg:w-[380px] bg-white dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent
                     z-50 lg:z-30 p-6 lg:p-0 overflow-y-auto lg:overflow-visible transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
                     ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}>
@@ -107,19 +107,31 @@ const JobBoardPage = () => {
                     </div>
 
                     <div className="space-y-6 lg:bg-white lg:dark:bg-gray-800 lg:p-6 lg:rounded-[2rem] lg:border lg:border-gray-100 lg:dark:border-gray-700 lg:shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
-                        {/* Search Keyword */}
+                        {/* Category Selection */}
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3">Search</label>
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-3 ml-1">Specialization</label>
                             <div className="relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-secondary transition-colors" size={16} />
-                                <input
-                                    type="text"
+                                <select
                                     name="category"
-                                    placeholder="Job title or keyword"
                                     value={filters.category}
                                     onChange={handleFilterChange}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-none focus:ring-2 focus:ring-secondary/20 transition-all font-heading font-medium text-sm text-primary dark:text-white placeholder:text-gray-400"
-                                />
+                                    className="w-full pl-6 pr-10 py-3.5 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border-2 border-transparent focus:border-secondary transition-all font-bold text-sm text-primary dark:text-white appearance-none cursor-pointer outline-none shadow-sm"
+                                >
+                                    <option value="">All Categories</option>
+                                    <option value="TECHNOLOGY">Technology & Software</option>
+                                    <option value="MARKETING">Marketing & Sales</option>
+                                    <option value="DESIGN">Creative & Design</option>
+                                    <option value="HEALTHCARE">Healthcare & Medicine</option>
+                                    <option value="FINANCE">Finance & Accounting</option>
+                                    <option value="EDUCATION">Education & Training</option>
+                                    <option value="ENGINEERING">Engineering</option>
+                                    <option value="LOGISTICS">Logistics & Supply Chain</option>
+                                    <option value="CUSTOMER_SERVICE">Customer Service</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-secondary transition-colors">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                </div>
                             </div>
                         </div>
 

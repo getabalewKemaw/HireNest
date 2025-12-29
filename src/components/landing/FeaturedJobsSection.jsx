@@ -12,14 +12,22 @@ const FeaturedJobsSection = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const data = await jobService.getJobs({ page: 0, size: 6 }); // Fetch top 6 for a clean grid
+                // Try fetching featured jobs first
+                let data = await jobService.getJobs({ isFeatured: true, page: 0, size: 6 });
+
+                // If no featured jobs, fetch latest active jobs as a fallback
+                if (!data || !data.content || data.content.length === 0) {
+                    console.log('No featured jobs found, falling back to latest jobs');
+                    data = await jobService.getJobs({ page: 0, size: 6 });
+                }
+
                 if (data && data.content) {
                     setJobs(data.content);
                 } else if (Array.isArray(data)) {
-                    setJobs(data.slice(0, 6)); // in case api returns array directly
+                    setJobs(data.slice(0, 6));
                 }
             } catch (error) {
-                console.error('Failed to fetch featured jobs', error);
+                console.error('Failed to fetch jobs', error);
             } finally {
                 setLoading(false);
             }
@@ -28,7 +36,8 @@ const FeaturedJobsSection = () => {
         fetchJobs();
     }, []);
 
-    if (!loading && jobs.length === 0) return null; // Don't show if no jobs
+    // Always show if loading, but if not loading and still no jobs, then return null
+    if (!loading && jobs.length === 0) return null;
 
     return (
         <section className="py-24 bg-white dark:bg-[#0B1C2D] relative overflow-hidden transition-colors duration-500">
@@ -41,14 +50,21 @@ const FeaturedJobsSection = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                     <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-bold uppercase tracking-widest mb-6 animate-fade-in-up">
-                            <Briefcase size={14} /> Open Positions
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-[10px] font-black uppercase tracking-[0.2em] mb-6 animate-fade-in-up shadow-sm">
+                            <Briefcase size={14} /> {jobs.some(j => j.isFeatured) ? 'Featured Positions' : 'Open Positions'}
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-serif font-black text-primary dark:text-white mb-6 leading-tight animate-fade-in-up animation-delay-100">
-                            Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-indigo-600 italic">Featured Roles</span>
+                        <h2 className="text-4xl md:text-6xl font-serif font-black text-primary dark:text-white mb-6 leading-[1.1] animate-fade-in-up animation-delay-100">
+                            Explore {jobs.some(j => j.isFeatured) ? (
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-indigo-600 italic">Featured Roles</span>
+                            ) : (
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary via-primary to-indigo-600 italic">Recent Roles</span>
+                            )}
                         </h2>
-                        <p className="text-lg text-gray-400 font-heading font-light max-w-xl animate-fade-in-up animation-delay-200">
-                            Discover career-defining opportunities at top-tier companies. Your next big move is just a click away.
+                        <p className="text-lg text-gray-500 dark:text-gray-400 font-heading font-light max-w-xl animate-fade-in-up animation-delay-200 leading-relaxed">
+                            {jobs.some(j => j.isFeatured)
+                                ? 'Discover career-defining opportunities at top-tier companies. Your next big move is just a click away.'
+                                : 'Explore the latest career opportunities added to our platform recently. Find your perfect match today.'
+                            }
                         </p>
                     </div>
 

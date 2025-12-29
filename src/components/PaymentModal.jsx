@@ -28,7 +28,7 @@ const PaymentModal = ({ isOpen, onClose, onSuccess, amount, currency = 'ETB', us
                 phoneNumber: formData.phoneNumber,
                 metadata: {
                     purpose: 'job_posting',
-                    jobData: jobData, // Include the actual job details
+                    jobData: jobData, 
                     timestamp: new Date().toISOString()
                 }
             };

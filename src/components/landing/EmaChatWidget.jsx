@@ -47,7 +47,7 @@ const EmaChatWidget = () => {
 
     if (!isOpen) {
         return (
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 translate-y-2 animate-bounce-slow">
+            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 translate-y-2 animate-bounce-slow  mt-20">
                 {/* AI Hint Tooltip */}
                 <div className="bg-white dark:bg-[#0B1C2D] px-4 py-2 rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 flex items-center gap-2 animate-fade-in">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -70,7 +70,7 @@ const EmaChatWidget = () => {
     }
 
     return (
-        <div className={`fixed bottom-6 right-6 z-50 transform transition-all duration-500 ease-out ${isMinimized ? 'h-16 w-64' : 'h-[600px] w-[400px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-3rem)]'} bg-white dark:bg-[#0B1C2D] rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/10 flex flex-col overflow-hidden`}>
+        <div className={`fixed bottom-6  top-0 right-6 z-50 transform transition-all duration-500 ease-out ${isMinimized ? 'h-16 w-64' : 'h-[600px] w-[400px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-3rem)]'} bg-white dark:bg-[#0B1C2D] rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/10 flex flex-col overflow-hidden  mt-20`}>
 
             {/* Header */}
             <div className="p-4 bg-gradient-to-r from-[#0B1C2D] to-secondary flex items-center justify-between text-white shrink-0">
@@ -107,7 +107,7 @@ const EmaChatWidget = () => {
                                             <img src="/image.png" alt="Ema" className="w-full h-full object-cover" />
                                         )}
                                     </div>
-                                    <div className={`p-4 rounded-2xl shadow-sm text-sm ${msg.role === 'user' ? 'bg-secondary text-white rounded-tr-none' : 'bg-white dark:bg-white/5 dark:text-gray-200 text-gray-800 border border-gray-100 dark:border-white/5 rounded-tl-none'}`}>
+                                    <div className={`p-4 rounded-2xl shadow-sm text-sm ${msg.role === 'user' ? 'bg-secondary text-white rounded-tr-none' : 'bg-white dark:bg-white/5 dark:text-gray-200 text-gray-100 border border-gray-100 dark:border-white/5 rounded-tl-none'}`}>
                                         <div className="prose prose-sm dark:prose-invert max-w-none">
                                             <ReactMarkdown
                                                 components={{
