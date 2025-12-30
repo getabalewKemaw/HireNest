@@ -4,7 +4,7 @@ import {
     MapPin, Briefcase, Clock, Calendar,
     DollarSign, Building2, Share2, Bookmark,
     ArrowLeft, CheckCircle2, Send, ShieldCheck,
-    GraduationCap, Users, ArrowRight
+    GraduationCap, Users, ArrowRight, Star
 } from 'lucide-react';
 import jobService from '../../services/jobService';
 import savedJobService from '../../services/savedJobService';

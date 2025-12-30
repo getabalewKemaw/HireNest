@@ -25,10 +25,13 @@ api.interceptors.request.use(
     console.log('🔑 Token exists:', !!token);
 
     if (token) {
-      if (!isTokenExpired(token)) {
+      const isCloudinary = config.url && config.url.includes('cloudinary.com');
+      if (!isTokenExpired(token) && !isCloudinary) {
         config.headers.Authorization = `Bearer ${token}`;
         console.log('✅ Token added to request');
         console.log('🔐 Token preview:', token.substring(0, 20) + '...');
+      } else if (isCloudinary) {
+        console.log('ℹ️ Cloudinary URL - skipping Authorization header');
       } else {
         console.warn('⚠️ Token is expired!');
         console.warn('⚠️ This request will likely fail with 401');

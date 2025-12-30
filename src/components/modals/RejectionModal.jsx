@@ -5,10 +5,9 @@ import Button from '../Button';
 const RejectionModal = ({ isOpen, onClose, onConfirm, applicantName }) => {
     const [reason, setReason] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     if (!isOpen) return null;
-
-    const [error, setError] = useState(null);
 
     const validate = (value) => {
         let err = null;

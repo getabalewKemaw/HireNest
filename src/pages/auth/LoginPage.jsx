@@ -105,7 +105,7 @@ const LoginPage = () => {
   return (
     <AuthLayout
       title="Welcome Back"
-      subtitle="Sign in to access your HireNest account and continue your journey"
+      subtitle="Sign in to access your Etworks account and continue your journey"
     >
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-xl text-sm mb-6 flex items-start shadow-sm">
