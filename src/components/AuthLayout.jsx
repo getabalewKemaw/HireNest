@@ -33,7 +33,7 @@ const AuthLayout = ({ children, title, subtitle, backButton = true }) => {
                             Unlock your <span className="text-secondary-light underline decoration-accent-light underline-offset-[12px] italic font-medium">potential</span> today.
                         </h1>
                         <p className="text-xl xl:text-2xl text-blue-100/70 font-light leading-relaxed max-w-xl font-heading">
-                            Join our community of over 10,000 professionals finding their dream roles through AI-driven matching.
+                            Join our community of over 10,000 professionals finding their dream roles through Alert maching .
                         </p>
                     </div>
                 </div>

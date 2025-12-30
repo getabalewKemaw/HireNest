@@ -2,7 +2,7 @@ import { Zap, Target, ShieldCheck, Cpu, ArrowUpRight, BarChart3 } from 'lucide-r
 
 const features = [
     {
-        title: "AI Precision Matching",
+        title: " Precision Matching",
         description: "Our proprietary neural engine decodes your career DNA to find roles that don't just match your title, but your trajectory.",
         icon: Cpu,
         color: "text-secondary",

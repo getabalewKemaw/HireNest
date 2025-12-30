@@ -96,6 +96,13 @@ const PostJobPage = () => {
 
     const validateField = (name, value) => {
         let error = null;
+
+            const min = Number(
+        name === 'salaryMin' ? value : formData.salaryMin
+    );
+    const max = Number(
+        name === 'salaryMax' ? value : formData.salaryMax
+    );
         if (name === 'title' && !value.trim()) error = 'Job title is required';
         if (name === 'category' && !value) error = 'Please select a category';
         if (name === 'country' && !value.trim()) error = 'Country is required';
@@ -588,7 +595,7 @@ const PostJobPage = () => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 error={errors.salaryMin}
-                                                icon={DollarSign}
+                                                // icon={DollarSign}
                                                 required
                                             />
                                             <Input
@@ -601,7 +608,7 @@ const PostJobPage = () => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                                 error={errors.salaryMax}
-                                                icon={DollarSign}
+                                                // icon={DollarSign}
                                                 required
                                             />
                                         </div>

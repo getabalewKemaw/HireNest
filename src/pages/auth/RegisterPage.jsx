@@ -124,7 +124,7 @@ const RegisterPage = () => {
   // =======================
   return (
     <AuthLayout
-      title="Join HireNest"
+      title="Join Etworks Today"
       subtitle="Create your account and unlock a world of professional opportunities"
     >
       {/* Backend / Server Error */}

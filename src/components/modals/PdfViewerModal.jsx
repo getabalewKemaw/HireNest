@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Button from '../Button';
 import { downloadFile } from '../../utils/downloadUtils';
+import { getAccessToken } from '../../utils/tokenUtils';
 import { X, Download, FileText, Maximize2, Minimize2, Loader2, AlertCircle } from 'lucide-react';
 
 const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' }) => {
@@ -9,8 +10,8 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Sanitize URL to fix legacy data with duplicated paths
-    const cleanUrl = pdfUrl ? pdfUrl.replace(/(employers\/verification\/)+/g, 'employers/verification/') : null;
+    // Use the URL as-is to avoid breaking legitimate nested paths
+    const cleanUrl = pdfUrl;
 
     useEffect(() => {
         let url = null;
@@ -18,22 +19,84 @@ const PdfViewerModal = ({ isOpen, onClose, pdfUrl, title = 'Document Preview' })
             const loadPdf = async () => {
                 setLoading(true);
                 setError(null);
+
+                const fetchWithFallback = async (targetUrl, stage = 0) => {
+                    try {
+                        const isCloudinary = targetUrl.includes('cloudinary.com');
+                        const token = getAccessToken();
+                        const headers = {};
+
+                        if (!isCloudinary && token) {
+                            headers['Authorization'] = `Bearer ${token}`;
+                        }
+
+                        console.log(`[PdfViewer] Stage ${stage} Attempt: ${targetUrl}`);
+                        const response = await fetch(targetUrl, {
+                            headers,
+                            credentials: isCloudinary ? 'omit' : 'same-origin'
+                        });
+
+                        if (!response.ok) {
+                            if (isCloudinary) {
+                                let nextUrl = targetUrl;
+
+                                if (stage === 0) {
+                                    // Stage 0 -> 1: Strip signature, keep same resource type
+                                    nextUrl = targetUrl.replace(/\/s--[^/]+\//, '/');
+                                    if (nextUrl !== targetUrl) {
+                                        console.log('🔄 Stage 1: Trying unsigned URL (same type)');
+                                        return await fetchWithFallback(nextUrl, 1);
+                                    }
+                                    stage = 1; // Skip to next stage if no signature was present
+                                }
+
+                                if (stage === 1) {
+                                    // Stage 1 -> 2: Switch resource type (raw <-> image)
+                                    // Also clean up double extensions
+                                    nextUrl = targetUrl.replace(/\/s--[^/]+\//, '/');
+                                    if (nextUrl.includes('/image/upload/')) {
+                                        nextUrl = nextUrl.replace('/image/upload/', '/raw/upload/');
+                                    } else if (nextUrl.includes('/raw/upload/')) {
+                                        nextUrl = nextUrl.replace('/raw/upload/', '/image/upload/');
+                                    }
+
+                                    // Fix legacy double extensions .pdf.pdf
+                                    if (nextUrl.toLowerCase().endsWith('.pdf.pdf')) {
+                                        nextUrl = nextUrl.slice(0, -4);
+                                    }
+
+                                    if (nextUrl !== targetUrl) {
+                                        console.log('🔄 Stage 2: Trying alternate resource type');
+                                        return await fetchWithFallback(nextUrl, 2);
+                                    }
+                                }
+                            }
+
+                            if (response.status === 401) throw new Error('Unauthorized access to document');
+                            if (response.status === 404) throw new Error('Document not found in Cloudinary');
+                            throw new Error(`Failed to load PDF (${response.status})`);
+                        }
+
+                        const originalBlob = await response.blob();
+                        const pdfBlob = new Blob([originalBlob], { type: 'application/pdf' });
+                        const objectUrl = window.URL.createObjectURL(pdfBlob);
+                        setLocalUrl(objectUrl);
+                        url = objectUrl;
+                        return true;
+                    } catch (err) {
+                        if (stage >= 2) throw err;
+
+                        // Handle network errors by moving to next stage
+                        console.warn('[PdfViewer] Network error, trying fallback...', err.message);
+                        return await fetchWithFallback(targetUrl, stage + 1);
+                    }
+                };
+
                 try {
-                    // Fetch the PDF binary data
-                    const response = await fetch(cleanUrl);
-                    if (!response.ok) throw new Error('Failed to load PDF');
-                    const originalBlob = await response.blob();
-
-                    // Create a NEW blob and explicitly set the type to application/pdf
-                    // This is crucial to prevent browsers from triggering a download dialog
-                    const pdfBlob = new Blob([originalBlob], { type: 'application/pdf' });
-                    url = window.URL.createObjectURL(pdfBlob);
-
-                    setLocalUrl(url);
+                    await fetchWithFallback(cleanUrl);
                 } catch (err) {
                     console.error('PdfViewer Error:', err);
-                    // Fallback to direct URL if fetch fails (e.g. CORS/Auth issues)
-                    setLocalUrl(cleanUrl);
+                    setLocalUrl(cleanUrl); // Fallback to direct URL
                     setError(null);
                 } finally {
                     setLoading(false);
